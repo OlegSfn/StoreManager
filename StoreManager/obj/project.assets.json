@@ -1,0 +1,150 @@
+{
+  "version": 3,
+  "targets": {
+    "net6.0": {
+      "DatabaseLayer/1.0.0": {
+        "type": "project",
+        "framework": ".NETCoreApp,Version=v6.0",
+        "dependencies": {
+          "Entities": "1.0.0"
+        },
+        "compile": {
+          "bin/placeholder/DatabaseLayer.dll": {}
+        },
+        "runtime": {
+          "bin/placeholder/DatabaseLayer.dll": {}
+        }
+      },
+      "DataLayer/1.0.0": {
+        "type": "project",
+        "framework": ".NETCoreApp,Version=v6.0",
+        "dependencies": {
+          "DatabaseLayer": "1.0.0",
+          "Entities": "1.0.0",
+          "UILayer": "1.0.0"
+        },
+        "compile": {
+          "bin/placeholder/DataLayer.dll": {}
+        },
+        "runtime": {
+          "bin/placeholder/DataLayer.dll": {}
+        }
+      },
+      "Entities/1.0.0": {
+        "type": "project",
+        "framework": ".NETCoreApp,Version=v6.0",
+        "compile": {
+          "bin/placeholder/Entities.dll": {}
+        },
+        "runtime": {
+          "bin/placeholder/Entities.dll": {}
+        }
+      },
+      "UILayer/1.0.0": {
+        "type": "project",
+        "framework": ".NETCoreApp,Version=v6.0",
+        "compile": {
+          "bin/placeholder/UILayer.dll": {}
+        },
+        "runtime": {
+          "bin/placeholder/UILayer.dll": {}
+        }
+      }
+    }
+  },
+  "libraries": {
+    "DatabaseLayer/1.0.0": {
+      "type": "project",
+      "path": "../DatabaseLayer/DatabaseLayer.csproj",
+      "msbuildProject": "../DatabaseLayer/DatabaseLayer.csproj"
+    },
+    "DataLayer/1.0.0": {
+      "type": "project",
+      "path": "../DataLayer/DataLayer.csproj",
+      "msbuildProject": "../DataLayer/DataLayer.csproj"
+    },
+    "Entities/1.0.0": {
+      "type": "project",
+      "path": "../Entities/Entities.csproj",
+      "msbuildProject": "../Entities/Entities.csproj"
+    },
+    "UILayer/1.0.0": {
+      "type": "project",
+      "path": "../UILayer/UILayer.csproj",
+      "msbuildProject": "../UILayer/UILayer.csproj"
+    }
+  },
+  "projectFileDependencyGroups": {
+    "net6.0": [
+      "DataLayer >= 1.0.0",
+      "DatabaseLayer >= 1.0.0",
+      "UILayer >= 1.0.0"
+    ]
+  },
+  "packageFolders": {
+    "/Users/oleg_sfn/.nuget/packages/": {}
+  },
+  "project": {
+    "version": "1.0.0",
+    "restore": {
+      "projectUniqueName": "/Users/oleg_sfn/RiderProjects/StoreManager/StoreManager/StoreManager.csproj",
+      "projectName": "StoreManager",
+      "projectPath": "/Users/oleg_sfn/RiderProjects/StoreManager/StoreManager/StoreManager.csproj",
+      "packagesPath": "/Users/oleg_sfn/.nuget/packages/",
+      "outputPath": "/Users/oleg_sfn/RiderProjects/StoreManager/StoreManager/obj/",
+      "projectStyle": "PackageReference",
+      "configFilePaths": [
+        "/Users/oleg_sfn/.nuget/NuGet/NuGet.Config"
+      ],
+      "originalTargetFrameworks": [
+        "net6.0"
+      ],
+      "sources": {
+        "https://api.nuget.org/v3/index.json": {}
+      },
+      "frameworks": {
+        "net6.0": {
+          "targetAlias": "net6.0",
+          "projectReferences": {
+            "/Users/oleg_sfn/RiderProjects/StoreManager/DatabaseLayer/DatabaseLayer.csproj": {
+              "projectPath": "/Users/oleg_sfn/RiderProjects/StoreManager/DatabaseLayer/DatabaseLayer.csproj"
+            },
+            "/Users/oleg_sfn/RiderProjects/StoreManager/DataLayer/DataLayer.csproj": {
+              "projectPath": "/Users/oleg_sfn/RiderProjects/StoreManager/DataLayer/DataLayer.csproj"
+            },
+            "/Users/oleg_sfn/RiderProjects/StoreManager/UILayer/UILayer.csproj": {
+              "projectPath": "/Users/oleg_sfn/RiderProjects/StoreManager/UILayer/UILayer.csproj"
+            }
+          }
+        }
+      },
+      "warningProperties": {
+        "warnAsError": [
+          "NU1605"
+        ]
+      }
+    },
+    "frameworks": {
+      "net6.0": {
+        "targetAlias": "net6.0",
+        "imports": [
+          "net461",
+          "net462",
+          "net47",
+          "net471",
+          "net472",
+          "net48",
+          "net481"
+        ],
+        "assetTargetFallback": true,
+        "warn": true,
+        "frameworkReferences": {
+          "Microsoft.NETCore.App": {
+            "privateAssets": "all"
+          }
+        },
+        "runtimeIdentifierGraphPath": "/usr/local/share/dotnet/sdk/6.0.416/RuntimeIdentifierGraph.json"
+      }
+    }
+  }
+}

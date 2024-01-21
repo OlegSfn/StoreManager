@@ -1,0 +1,76 @@
+{
+  "runtimeTarget": {
+    "name": ".NETCoreApp,Version=v6.0",
+    "signature": ""
+  },
+  "compilationOptions": {},
+  "targets": {
+    ".NETCoreApp,Version=v6.0": {
+      "StoreManager/1.0.0": {
+        "dependencies": {
+          "DataLayer": "1.0.0",
+          "DatabaseLayer": "1.0.0",
+          "UILayer": "1.0.0"
+        },
+        "runtime": {
+          "StoreManager.dll": {}
+        }
+      },
+      "DatabaseLayer/1.0.0": {
+        "dependencies": {
+          "Entities": "1.0.0"
+        },
+        "runtime": {
+          "DatabaseLayer.dll": {}
+        }
+      },
+      "DataLayer/1.0.0": {
+        "dependencies": {
+          "DatabaseLayer": "1.0.0",
+          "Entities": "1.0.0",
+          "UILayer": "1.0.0"
+        },
+        "runtime": {
+          "DataLayer.dll": {}
+        }
+      },
+      "Entities/1.0.0": {
+        "runtime": {
+          "Entities.dll": {}
+        }
+      },
+      "UILayer/1.0.0": {
+        "runtime": {
+          "UILayer.dll": {}
+        }
+      }
+    }
+  },
+  "libraries": {
+    "StoreManager/1.0.0": {
+      "type": "project",
+      "serviceable": false,
+      "sha512": ""
+    },
+    "DatabaseLayer/1.0.0": {
+      "type": "project",
+      "serviceable": false,
+      "sha512": ""
+    },
+    "DataLayer/1.0.0": {
+      "type": "project",
+      "serviceable": false,
+      "sha512": ""
+    },
+    "Entities/1.0.0": {
+      "type": "project",
+      "serviceable": false,
+      "sha512": ""
+    },
+    "UILayer/1.0.0": {
+      "type": "project",
+      "serviceable": false,
+      "sha512": ""
+    }
+  }
+}

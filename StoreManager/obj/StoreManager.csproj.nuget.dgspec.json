@@ -1,0 +1,297 @@
+{
+  "format": 1,
+  "restore": {
+    "/Users/oleg_sfn/RiderProjects/StoreManager/StoreManager/StoreManager.csproj": {}
+  },
+  "projects": {
+    "/Users/oleg_sfn/RiderProjects/StoreManager/DatabaseLayer/DatabaseLayer.csproj": {
+      "version": "1.0.0",
+      "restore": {
+        "projectUniqueName": "/Users/oleg_sfn/RiderProjects/StoreManager/DatabaseLayer/DatabaseLayer.csproj",
+        "projectName": "DatabaseLayer",
+        "projectPath": "/Users/oleg_sfn/RiderProjects/StoreManager/DatabaseLayer/DatabaseLayer.csproj",
+        "packagesPath": "/Users/oleg_sfn/.nuget/packages/",
+        "outputPath": "/Users/oleg_sfn/RiderProjects/StoreManager/DatabaseLayer/obj/",
+        "projectStyle": "PackageReference",
+        "configFilePaths": [
+          "/Users/oleg_sfn/.nuget/NuGet/NuGet.Config"
+        ],
+        "originalTargetFrameworks": [
+          "net6.0"
+        ],
+        "sources": {
+          "https://api.nuget.org/v3/index.json": {}
+        },
+        "frameworks": {
+          "net6.0": {
+            "targetAlias": "net6.0",
+            "projectReferences": {
+              "/Users/oleg_sfn/RiderProjects/StoreManager/Entities/Entities.csproj": {
+                "projectPath": "/Users/oleg_sfn/RiderProjects/StoreManager/Entities/Entities.csproj"
+              }
+            }
+          }
+        },
+        "warningProperties": {
+          "warnAsError": [
+            "NU1605"
+          ]
+        }
+      },
+      "frameworks": {
+        "net6.0": {
+          "targetAlias": "net6.0",
+          "imports": [
+            "net461",
+            "net462",
+            "net47",
+            "net471",
+            "net472",
+            "net48",
+            "net481"
+          ],
+          "assetTargetFallback": true,
+          "warn": true,
+          "frameworkReferences": {
+            "Microsoft.NETCore.App": {
+              "privateAssets": "all"
+            }
+          },
+          "runtimeIdentifierGraphPath": "/usr/local/share/dotnet/sdk/6.0.416/RuntimeIdentifierGraph.json"
+        }
+      }
+    },
+    "/Users/oleg_sfn/RiderProjects/StoreManager/DataLayer/DataLayer.csproj": {
+      "version": "1.0.0",
+      "restore": {
+        "projectUniqueName": "/Users/oleg_sfn/RiderProjects/StoreManager/DataLayer/DataLayer.csproj",
+        "projectName": "DataLayer",
+        "projectPath": "/Users/oleg_sfn/RiderProjects/StoreManager/DataLayer/DataLayer.csproj",
+        "packagesPath": "/Users/oleg_sfn/.nuget/packages/",
+        "outputPath": "/Users/oleg_sfn/RiderProjects/StoreManager/DataLayer/obj/",
+        "projectStyle": "PackageReference",
+        "configFilePaths": [
+          "/Users/oleg_sfn/.nuget/NuGet/NuGet.Config"
+        ],
+        "originalTargetFrameworks": [
+          "net6.0"
+        ],
+        "sources": {
+          "https://api.nuget.org/v3/index.json": {}
+        },
+        "frameworks": {
+          "net6.0": {
+            "targetAlias": "net6.0",
+            "projectReferences": {
+              "/Users/oleg_sfn/RiderProjects/StoreManager/DatabaseLayer/DatabaseLayer.csproj": {
+                "projectPath": "/Users/oleg_sfn/RiderProjects/StoreManager/DatabaseLayer/DatabaseLayer.csproj"
+              },
+              "/Users/oleg_sfn/RiderProjects/StoreManager/Entities/Entities.csproj": {
+                "projectPath": "/Users/oleg_sfn/RiderProjects/StoreManager/Entities/Entities.csproj"
+              },
+              "/Users/oleg_sfn/RiderProjects/StoreManager/UILayer/UILayer.csproj": {
+                "projectPath": "/Users/oleg_sfn/RiderProjects/StoreManager/UILayer/UILayer.csproj"
+              }
+            }
+          }
+        },
+        "warningProperties": {
+          "warnAsError": [
+            "NU1605"
+          ]
+        }
+      },
+      "frameworks": {
+        "net6.0": {
+          "targetAlias": "net6.0",
+          "imports": [
+            "net461",
+            "net462",
+            "net47",
+            "net471",
+            "net472",
+            "net48",
+            "net481"
+          ],
+          "assetTargetFallback": true,
+          "warn": true,
+          "frameworkReferences": {
+            "Microsoft.NETCore.App": {
+              "privateAssets": "all"
+            }
+          },
+          "runtimeIdentifierGraphPath": "/usr/local/share/dotnet/sdk/6.0.416/RuntimeIdentifierGraph.json"
+        }
+      }
+    },
+    "/Users/oleg_sfn/RiderProjects/StoreManager/Entities/Entities.csproj": {
+      "version": "1.0.0",
+      "restore": {
+        "projectUniqueName": "/Users/oleg_sfn/RiderProjects/StoreManager/Entities/Entities.csproj",
+        "projectName": "Entities",
+        "projectPath": "/Users/oleg_sfn/RiderProjects/StoreManager/Entities/Entities.csproj",
+        "packagesPath": "/Users/oleg_sfn/.nuget/packages/",
+        "outputPath": "/Users/oleg_sfn/RiderProjects/StoreManager/Entities/obj/",
+        "projectStyle": "PackageReference",
+        "configFilePaths": [
+          "/Users/oleg_sfn/.nuget/NuGet/NuGet.Config"
+        ],
+        "originalTargetFrameworks": [
+          "net6.0"
+        ],
+        "sources": {
+          "https://api.nuget.org/v3/index.json": {}
+        },
+        "frameworks": {
+          "net6.0": {
+            "targetAlias": "net6.0",
+            "projectReferences": {}
+          }
+        },
+        "warningProperties": {
+          "warnAsError": [
+            "NU1605"
+          ]
+        }
+      },
+      "frameworks": {
+        "net6.0": {
+          "targetAlias": "net6.0",
+          "imports": [
+            "net461",
+            "net462",
+            "net47",
+            "net471",
+            "net472",
+            "net48",
+            "net481"
+          ],
+          "assetTargetFallback": true,
+          "warn": true,
+          "frameworkReferences": {
+            "Microsoft.NETCore.App": {
+              "privateAssets": "all"
+            }
+          },
+          "runtimeIdentifierGraphPath": "/usr/local/share/dotnet/sdk/6.0.416/RuntimeIdentifierGraph.json"
+        }
+      }
+    },
+    "/Users/oleg_sfn/RiderProjects/StoreManager/StoreManager/StoreManager.csproj": {
+      "version": "1.0.0",
+      "restore": {
+        "projectUniqueName": "/Users/oleg_sfn/RiderProjects/StoreManager/StoreManager/StoreManager.csproj",
+        "projectName": "StoreManager",
+        "projectPath": "/Users/oleg_sfn/RiderProjects/StoreManager/StoreManager/StoreManager.csproj",
+        "packagesPath": "/Users/oleg_sfn/.nuget/packages/",
+        "outputPath": "/Users/oleg_sfn/RiderProjects/StoreManager/StoreManager/obj/",
+        "projectStyle": "PackageReference",
+        "configFilePaths": [
+          "/Users/oleg_sfn/.nuget/NuGet/NuGet.Config"
+        ],
+        "originalTargetFrameworks": [
+          "net6.0"
+        ],
+        "sources": {
+          "https://api.nuget.org/v3/index.json": {}
+        },
+        "frameworks": {
+          "net6.0": {
+            "targetAlias": "net6.0",
+            "projectReferences": {
+              "/Users/oleg_sfn/RiderProjects/StoreManager/DatabaseLayer/DatabaseLayer.csproj": {
+                "projectPath": "/Users/oleg_sfn/RiderProjects/StoreManager/DatabaseLayer/DatabaseLayer.csproj"
+              },
+              "/Users/oleg_sfn/RiderProjects/StoreManager/DataLayer/DataLayer.csproj": {
+                "projectPath": "/Users/oleg_sfn/RiderProjects/StoreManager/DataLayer/DataLayer.csproj"
+              },
+              "/Users/oleg_sfn/RiderProjects/StoreManager/UILayer/UILayer.csproj": {
+                "projectPath": "/Users/oleg_sfn/RiderProjects/StoreManager/UILayer/UILayer.csproj"
+              }
+            }
+          }
+        },
+        "warningProperties": {
+          "warnAsError": [
+            "NU1605"
+          ]
+        }
+      },
+      "frameworks": {
+        "net6.0": {
+          "targetAlias": "net6.0",
+          "imports": [
+            "net461",
+            "net462",
+            "net47",
+            "net471",
+            "net472",
+            "net48",
+            "net481"
+          ],
+          "assetTargetFallback": true,
+          "warn": true,
+          "frameworkReferences": {
+            "Microsoft.NETCore.App": {
+              "privateAssets": "all"
+            }
+          },
+          "runtimeIdentifierGraphPath": "/usr/local/share/dotnet/sdk/6.0.416/RuntimeIdentifierGraph.json"
+        }
+      }
+    },
+    "/Users/oleg_sfn/RiderProjects/StoreManager/UILayer/UILayer.csproj": {
+      "version": "1.0.0",
+      "restore": {
+        "projectUniqueName": "/Users/oleg_sfn/RiderProjects/StoreManager/UILayer/UILayer.csproj",
+        "projectName": "UILayer",
+        "projectPath": "/Users/oleg_sfn/RiderProjects/StoreManager/UILayer/UILayer.csproj",
+        "packagesPath": "/Users/oleg_sfn/.nuget/packages/",
+        "outputPath": "/Users/oleg_sfn/RiderProjects/StoreManager/UILayer/obj/",
+        "projectStyle": "PackageReference",
+        "configFilePaths": [
+          "/Users/oleg_sfn/.nuget/NuGet/NuGet.Config"
+        ],
+        "originalTargetFrameworks": [
+          "net6.0"
+        ],
+        "sources": {
+          "https://api.nuget.org/v3/index.json": {}
+        },
+        "frameworks": {
+          "net6.0": {
+            "targetAlias": "net6.0",
+            "projectReferences": {}
+          }
+        },
+        "warningProperties": {
+          "warnAsError": [
+            "NU1605"
+          ]
+        }
+      },
+      "frameworks": {
+        "net6.0": {
+          "targetAlias": "net6.0",
+          "imports": [
+            "net461",
+            "net462",
+            "net47",
+            "net471",
+            "net472",
+            "net48",
+            "net481"
+          ],
+          "assetTargetFallback": true,
+          "warn": true,
+          "frameworkReferences": {
+            "Microsoft.NETCore.App": {
+              "privateAssets": "all"
+            }
+          },
+          "runtimeIdentifierGraphPath": "/usr/local/share/dotnet/sdk/6.0.416/RuntimeIdentifierGraph.json"
+        }
+      }
+    }
+  }
+}

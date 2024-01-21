@@ -1,0 +1,38 @@
+{
+	"store_id": 1,
+	"store_name": "Rodriguez, Schmidt and Martin",
+	"location": "West Victoria",
+	"employees": [
+ 		Mary Williams,
+		Justin Ward,
+		Madison Evans,
+		Karen Thomas,
+		Michaela Hamilton,
+		Mary Hutchinson,
+		Richard Frank,
+		Levi Walter,
+		Nancy Middleton,
+		Heather James,
+		Nathaniel Smith,
+		Matthew Young,
+		Deborah Ortiz 
+	],
+	"products": [
+ 		name,
+		rich,
+		explain,
+		police,
+		raise,
+		almost,
+		while,
+		question,
+		total,
+		poor,
+		challenge,
+		author,
+		early,
+		crime,
+		media,
+		green 
+	]
+}

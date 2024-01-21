@@ -1,0 +1,15 @@
+/Users/oleg_sfn/RiderProjects/StoreManager/DatabaseLayer/bin/Debug/net6.0/DatabaseLayer.deps.json
+/Users/oleg_sfn/RiderProjects/StoreManager/DatabaseLayer/bin/Debug/net6.0/DatabaseLayer.dll
+/Users/oleg_sfn/RiderProjects/StoreManager/DatabaseLayer/bin/Debug/net6.0/DatabaseLayer.pdb
+/Users/oleg_sfn/RiderProjects/StoreManager/DatabaseLayer/obj/Debug/net6.0/DatabaseLayer.csproj.AssemblyReference.cache
+/Users/oleg_sfn/RiderProjects/StoreManager/DatabaseLayer/obj/Debug/net6.0/DatabaseLayer.GeneratedMSBuildEditorConfig.editorconfig
+/Users/oleg_sfn/RiderProjects/StoreManager/DatabaseLayer/obj/Debug/net6.0/DatabaseLayer.AssemblyInfoInputs.cache
+/Users/oleg_sfn/RiderProjects/StoreManager/DatabaseLayer/obj/Debug/net6.0/DatabaseLayer.AssemblyInfo.cs
+/Users/oleg_sfn/RiderProjects/StoreManager/DatabaseLayer/obj/Debug/net6.0/DatabaseLayer.csproj.CoreCompileInputs.cache
+/Users/oleg_sfn/RiderProjects/StoreManager/DatabaseLayer/obj/Debug/net6.0/DatabaseLayer.dll
+/Users/oleg_sfn/RiderProjects/StoreManager/DatabaseLayer/obj/Debug/net6.0/refint/DatabaseLayer.dll
+/Users/oleg_sfn/RiderProjects/StoreManager/DatabaseLayer/obj/Debug/net6.0/DatabaseLayer.pdb
+/Users/oleg_sfn/RiderProjects/StoreManager/DatabaseLayer/obj/Debug/net6.0/ref/DatabaseLayer.dll
+/Users/oleg_sfn/RiderProjects/StoreManager/DatabaseLayer/bin/Debug/net6.0/Entities.dll
+/Users/oleg_sfn/RiderProjects/StoreManager/DatabaseLayer/bin/Debug/net6.0/Entities.pdb
+/Users/oleg_sfn/RiderProjects/StoreManager/DatabaseLayer/obj/Debug/net6.0/DatabaseLayer.csproj.CopyComplete

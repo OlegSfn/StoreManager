@@ -1,0 +1,12 @@
+/Users/oleg_sfn/RiderProjects/StoreManager/Entities/bin/Debug/net6.0/Entities.deps.json
+/Users/oleg_sfn/RiderProjects/StoreManager/Entities/bin/Debug/net6.0/Entities.dll
+/Users/oleg_sfn/RiderProjects/StoreManager/Entities/bin/Debug/net6.0/Entities.pdb
+/Users/oleg_sfn/RiderProjects/StoreManager/Entities/obj/Debug/net6.0/Entities.csproj.AssemblyReference.cache
+/Users/oleg_sfn/RiderProjects/StoreManager/Entities/obj/Debug/net6.0/Entities.GeneratedMSBuildEditorConfig.editorconfig
+/Users/oleg_sfn/RiderProjects/StoreManager/Entities/obj/Debug/net6.0/Entities.AssemblyInfoInputs.cache
+/Users/oleg_sfn/RiderProjects/StoreManager/Entities/obj/Debug/net6.0/Entities.AssemblyInfo.cs
+/Users/oleg_sfn/RiderProjects/StoreManager/Entities/obj/Debug/net6.0/Entities.csproj.CoreCompileInputs.cache
+/Users/oleg_sfn/RiderProjects/StoreManager/Entities/obj/Debug/net6.0/Entities.dll
+/Users/oleg_sfn/RiderProjects/StoreManager/Entities/obj/Debug/net6.0/refint/Entities.dll
+/Users/oleg_sfn/RiderProjects/StoreManager/Entities/obj/Debug/net6.0/Entities.pdb
+/Users/oleg_sfn/RiderProjects/StoreManager/Entities/obj/Debug/net6.0/ref/Entities.dll
