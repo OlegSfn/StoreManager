@@ -1,4 +1,5 @@
 using System.Text;
+using System.Text.RegularExpressions;
 using Entities;
 
 namespace DataLayer;
@@ -88,7 +89,7 @@ public static class JsonParser
         void PushValue()
         {
             if (parseStates.Peek() == ParseState.InArray)
-                curVal += StoreData.S_secretSep;
+                curVal += DataType.S_secretSep;
             else
                 ResetValues();
         }
@@ -153,7 +154,7 @@ public static class JsonParser
                     else if (c == '}')
                     {
                         curState = parseStates.Pop();
-                        dataTypes.Add((T)curStore.Clone());
+                        dataTypes.Add(curStore);
                         curStore = new T();
                     }
                     else if (!char.IsWhiteSpace(c))
@@ -315,7 +316,28 @@ public static class JsonParser
         return dataTypes;
     }
 
-    //TODO: Remake on StringBuilder
+
+    public static List<DataType> ReadJsonRegex<T>() where T : DataType, new() 
+    {
+        List<DataType> dataTypes = new List<DataType>();
+        T curStore = new T();
+        string input = FormatInputForRegex(FormInput());
+        string storePattern = @"\{""store_id"":(\d+),""store_name"":""(.*?)"",""location"":""(.*?)"",""employees"":\[(.+?)\],""products"":\[(.+?)\]}";
+        foreach (Match store in Regex.Matches(input, storePattern))
+        {
+            curStore["store_id"] = store.Groups[1].Value;
+            curStore["store_name"] = store.Groups[2].Value;
+            curStore["location"] = store.Groups[3].Value;
+            curStore["employees"] = string.Join(DataType.S_secretSep, store.Groups[4].Value.Split(',').Select(x => x.Trim('"')));
+            curStore["products"] = string.Join(DataType.S_secretSep, store.Groups[5].Value.Split(',').Select(x => x.Trim('"')));
+            dataTypes.Add(curStore);
+            curStore = new T();
+        }
+        
+        return dataTypes;
+    }
+
+
     private static string FormInput()
     {
         string line;
@@ -324,6 +346,24 @@ public static class JsonParser
         {
             sb.Append(line);
             sb.Append(Environment.NewLine);
+        }
+
+        return sb.ToString();
+    }
+
+    private static string FormatInputForRegex(string input)
+    {
+        StringBuilder sb = new StringBuilder();
+        bool isVerbatim = false;
+        foreach (char c in input)
+        {
+            if (char.IsWhiteSpace(c) && !isVerbatim)
+                continue;
+            
+            if (c == '"')
+                isVerbatim = !isVerbatim;
+
+            sb.Append(c);
         }
 
         return sb.ToString();

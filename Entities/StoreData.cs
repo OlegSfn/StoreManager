@@ -8,8 +8,6 @@ public class StoreData : DataType
     public string? Location { get; set; }
     public string[]? Employees { get; set; }
     public string[]? Products { get; set; }
-    
-    public static readonly string S_secretSep = "`(){}{}()`";
 
     private readonly string _noValStr = "Нет значения";
     

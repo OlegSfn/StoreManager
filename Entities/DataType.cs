@@ -2,6 +2,8 @@ namespace Entities;
 
 public abstract class DataType : ICloneable
 {
+    public static readonly string S_secretSep = "`(){}{}()`";
+    
     public abstract string[] GetFieldNames();
     public abstract string[] GetFieldValues();
     

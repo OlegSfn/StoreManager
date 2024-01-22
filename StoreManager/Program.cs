@@ -1,4 +1,6 @@
 ﻿using DatabaseLayer;
+using DataLayer;
+using Entities;
 using UILayer;
 
 namespace StoreManager;
@@ -17,7 +19,8 @@ internal static class Program
         //string jsonData = File.ReadAllText("/Users/oleg_sfn/Downloads/emptyObj.json");
         //StoreData store = JsonSerializer.Deserialize<StoreData>(jsonData);
         //Console.WriteLine(store);
-
+        
+        
         Storage.SStandardInput = Console.In;
         Storage.SStandardOutput = Console.Out;
         while (true)
