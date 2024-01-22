@@ -1,3 +1,4 @@
+using System.Diagnostics;
 using DatabaseLayer;
 using DataLayer;
 using Entities;
@@ -14,11 +15,7 @@ public static class RouteManager
         MenuPoint filterData = new MenuPoint("Отфильтровать данные.", FilterData);
         MenuPoint sortData = new MenuPoint("Отсортировать данные.", SortData);
         MenuPoint saveData = new MenuPoint("Сохранить (вывести) данные.", SaveData);
-        MenuPoint settings = new MenuPoint("Настройки.", () =>
-        {
-            Console.WriteLine("Настройки ещё в процессе разработки.");
-            InputHandler.WaitForUserInput("Нажмите любую клавишу, чтобы продолжить: ");
-        });
+        MenuPoint settings = new MenuPoint("Настройки.", SettingsManager.OpenSettings);
         MenuPoint exit = new MenuPoint("Выйти.", () => Environment.Exit(0));
         
         menuPoints.Add(enterData);
@@ -34,38 +31,80 @@ public static class RouteManager
         return mainMenu;
     }
 
+    public static void HandleFirstUsing()
+    {
+        string question = "Вы ни разу не открывали это приложение, хотите настроить его?";
+        Storage.ScurSettings!.IsFirstUsing = false;
+        SettingsManager.SaveSettings(true);
+        if (InputHandler.AskUserYesOrNo(question, ConsoleKey.Enter))
+            SettingsManager.OpenSettings();
+        else
+        {
+            SettingsManager.LoadDefaultSettings();
+            Printer.FullClear();
+        }
+    }
+    
     private static void EnterData()
     {
-        MenuPoint fileMode = new MenuPoint("Считать из файла");
-        MenuPoint consoleMode = new MenuPoint("Считать из консоли");
-        Menu chooseModeMenu = new Menu(new[] { fileMode, consoleMode });
-        chooseModeMenu.HandleUsing();
-        try
+        void EnterDataViaConsole()
         {
-            if (chooseModeMenu.SelectedMenuPoint == 0)
+            Console.WriteLine("Введите ваши данные:");
+            try
             {
-                string filePath =
-                    InputHandler.GetFilePathToJson("Введите путь до json файла, из которого надо считать данные: ");
+                DataManager.EnterData();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+                InputHandler.WaitForUserInput("Нажмите любую кнопку, чтобы продолжить: ");
+            }
+        }
+
+        void EnterDataViaFile()
+        {
+            try
+            {
+                string filePath = Storage.ScurSettings.FavouriteInputFile;
+                if (filePath == string.Empty)
+                    filePath = InputHandler.GetFilePathToJson("Введите путь до json файла, из которого надо считать данные: ");
+                
                 using StreamReader sr = new StreamReader(filePath);
                 Console.SetIn(sr);
                 DataManager.EnterData(filePath);
             }
-            else
+            catch (Exception ex)
             {
-                Console.WriteLine("Введите ваши данные:");
-                DataManager.EnterData();
+                Console.WriteLine(ex.Message);
+                InputHandler.WaitForUserInput("Нажмите любую кнопку, чтобы продолжить: ");
+            }
+            finally
+            {
+                Console.SetIn(Storage.SStandardInput);
             }
         }
-        catch (Exception ex)
-        {
-            Console.WriteLine(ex.Message);
-            InputHandler.WaitForUserInput("Нажмите любую кнопку, чтобы продолжить: ");
-        }
-        finally
-        {
-            Console.SetIn(Storage.SStandardInput);
-        }
 
+        switch (Storage.ScurSettings.EnterDataChoice)
+        {
+            case ConsoleFileOption.AlwaysAskUser:
+            {
+                MenuPoint fileMode = new MenuPoint("Считать из файла");
+                MenuPoint consoleMode = new MenuPoint("Считать из консоли");
+                Menu chooseModeMenu = new Menu(new[] { fileMode, consoleMode });
+                chooseModeMenu.HandleUsing();
+                if (chooseModeMenu.SelectedMenuPoint == 0)
+                    EnterDataViaFile();
+                else
+                    EnterDataViaConsole();
+                break;
+            }
+            case ConsoleFileOption.AlwaysWithConsole:
+                EnterDataViaConsole();
+                break;
+            case ConsoleFileOption.AlwaysWithFile:
+                EnterDataViaFile();
+                break;
+        }
     }
     
     private static void FilterData()
@@ -122,39 +161,92 @@ public static class RouteManager
         Menu saveMenu = Menu.CreateChoiceMenu(saveDatas);
         saveMenu.HandleUsing();
         
-        MenuPoint fileMode = new MenuPoint("Записать в файл");
-        MenuPoint consoleMode = new MenuPoint("Вывести в консоль");
-        Menu chooseModeMenu = new Menu(new[] { fileMode, consoleMode });
-        chooseModeMenu.HandleUsing();
-        
-        if (chooseModeMenu.SelectedMenuPoint == 0)
+        void ShowDataViaFile()
         {
-            string filePath = InputHandler.GetValidPath("Введите путь, куда требуется сохранить данные: ");
+            string filePath = Storage.ScurSettings.FavouriteOutputFile;
+            if (filePath == string.Empty)
+                filePath = InputHandler.GetValidPath("Введите путь, куда требуется сохранить данные: ");
+            
             using StreamWriter sr = new StreamWriter(filePath);
             Console.SetOut(sr);
             try
             {
                 JsonParser.WriteJson(Storage.SdataBlocks[saveMenu.SelectedMenuPoint]);
+                if (Storage.ScurSettings.NeedOpenFileAfterWriting)
+                    OpenFileInEditor(filePath);
             }
             finally
             {
                 Console.SetOut(Storage.SStandardOutput);
             }
+
             Printer.PrintInfo("Данные успешно записаны!");
         }
-        else
+        void ShowDataViaConsole()
         {
-            MenuPoint jsonMode = new MenuPoint("В JSON формате ");
-            MenuPoint tableMode = new MenuPoint("В табличном формате");
-            Menu chooseViewModeMenu = new Menu(new[] { jsonMode, tableMode });
-            chooseViewModeMenu.HandleUsing();
-            if (chooseViewModeMenu.SelectedMenuPoint == 0)
+            if (Storage.ScurSettings.ViewingMode == ViewingMode.AskUser)
+            {
+                MenuPoint jsonMode = new MenuPoint("В JSON формате ");
+                MenuPoint tableMode = new MenuPoint("В табличном формате");
+                Menu chooseViewModeMenu = new Menu(new[] { jsonMode, tableMode });
+                chooseViewModeMenu.HandleUsing();
+                if (chooseViewModeMenu.SelectedMenuPoint == 0)
+                {
+                    JsonParser.WriteJson(Storage.SdataBlocks[saveMenu.SelectedMenuPoint]);
+                    InputHandler.WaitForUserInput("Нажмите любую кнопку, чтобы продолжить: ");
+                }
+                else
+                    Printer.ShowTable(Storage.SdataBlocks[saveMenu.SelectedMenuPoint].DataTypes.ToArray());
+            }
+            else if (Storage.ScurSettings.ViewingMode == ViewingMode.Json)
             {
                 JsonParser.WriteJson(Storage.SdataBlocks[saveMenu.SelectedMenuPoint]);
                 InputHandler.WaitForUserInput("Нажмите любую кнопку, чтобы продолжить: ");
             }
             else
                 Printer.ShowTable(Storage.SdataBlocks[saveMenu.SelectedMenuPoint].DataTypes.ToArray());
+        }
+
+        switch (Storage.ScurSettings.ShowResultChoice)
+        {
+            case ConsoleFileOption.AlwaysAskUser:
+            {
+                MenuPoint fileMode = new MenuPoint("Записать в файл");
+                MenuPoint consoleMode = new MenuPoint("Вывести в консоль");
+                Menu chooseModeMenu = new Menu(new[] { fileMode, consoleMode });
+                chooseModeMenu.HandleUsing();
+                if (chooseModeMenu.SelectedMenuPoint == 0)
+                    ShowDataViaFile();
+                else
+                    ShowDataViaConsole();
+                break;
+            }
+            case ConsoleFileOption.AlwaysWithFile:
+                ShowDataViaFile();
+                break;
+            case ConsoleFileOption.AlwaysWithConsole:
+                ShowDataViaConsole();
+                break;
+            default:
+                throw new ArgumentOutOfRangeException();
+        }
+    }
+    
+    private static void OpenFileInEditor(string filePath)
+    {
+        try
+        {
+            using var process = new Process();
+            process.StartInfo = new ProcessStartInfo
+            {
+                UseShellExecute = true,
+                FileName = filePath
+            };
+            process.Start();
+        }
+        catch (Exception)
+        {
+            Console.WriteLine("Произошла ошибка при запуске отдельного приложения.");
         }
     }
 }

@@ -23,12 +23,15 @@ internal static class Program
         
         Storage.SStandardInput = Console.In;
         Storage.SStandardOutput = Console.Out;
+        SettingsManager.LoadSettings();
+        if (Storage.ScurSettings.IsFirstUsing)
+            RouteManager.HandleFirstUsing();
+        
         while (true)
         {
-            Menu mainMenu = RouteManager.CreateMainMenu();
             try
             {
-                mainMenu.HandleUsing();
+                RouteManager.CreateMainMenu().HandleUsing();
             }
             catch (Exception ex)
             {

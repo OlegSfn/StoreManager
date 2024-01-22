@@ -32,6 +32,11 @@ public static class JsonParser
         foreach (string line in dataBlock.FormJson().Split(Environment.NewLine))
             Console.WriteLine(line);
     }
+    
+    public static void WriteJson(DataType dataType)
+    { 
+        Console.WriteLine(dataType);
+    }
 
     public static List<DataType> ReadJson<T>() where T : DataType, new()
     {

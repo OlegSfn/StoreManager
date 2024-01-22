@@ -243,4 +243,39 @@ public class Printer
 
         Console.ResetColor();
     }
+    
+    public static string boolToYesOrNo(bool b) => b ? "Да" : "Нет";
+
+    public static string WhereToShowResultOptionToString(ConsoleFileOption consoleFileOption)
+    {
+        return consoleFileOption switch
+        {
+            ConsoleFileOption.AlwaysAskUser => "Всегда спрашивать",
+            ConsoleFileOption.AlwaysWithFile => "Всегда сохранять в файл",
+            ConsoleFileOption.AlwaysWithConsole => "Всегда показывать в консоли",
+            _ => throw new ArgumentOutOfRangeException(nameof(consoleFileOption), consoleFileOption, null)
+        };
+    }
+    
+    public static string HowToShowResultOptionToString(ViewingMode viewingMode)
+    {
+        return viewingMode switch
+        {
+            ViewingMode.AskUser => "Всегда спрашивать",
+            ViewingMode.Json => "В формате JSON",
+            ViewingMode.Table => "В формате таблицы",
+            _ => throw new ArgumentOutOfRangeException(nameof(viewingMode), viewingMode, null)
+        };
+    }
+    
+    public static string EnterDataOptionToString(ConsoleFileOption consoleFileOption)
+    {
+        return consoleFileOption switch
+        {
+            ConsoleFileOption.AlwaysAskUser => "Всегда спрашивать",
+            ConsoleFileOption.AlwaysWithFile => "Всегда считывать из файла",
+            ConsoleFileOption.AlwaysWithConsole => "Всегда считывать из консоли",
+            _ => throw new ArgumentOutOfRangeException(nameof(consoleFileOption), consoleFileOption, null)
+        };
+    }
 }
