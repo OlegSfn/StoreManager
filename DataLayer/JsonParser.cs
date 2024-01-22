@@ -18,7 +18,9 @@ public enum ValueType
 {
     None,
     String,
-    Int
+    Value,
+    Bool,
+    Null
 }
 
 public static class JsonParser
@@ -39,12 +41,58 @@ public static class JsonParser
         List<DataType> dataTypes = new List<DataType>();
         T curStore = new T();
         string curKey = "", curVal = "";
+        bool hasDotInside = false;
         ValueType curValueType = ValueType.None;
+        char[] tfnAlph = { 't', 'r', 'u', 'e', 'f', 'a', 'l', 's', 'n', 'u' };
+        
         void ThrowExceptionWithComments(string exceptionMessage, char character)
         {
             throw new Exception($"{exceptionMessage}, got {character} in line {lineNumber} on character {characterNumber}");
         }
-        
+
+        void ResetValues()
+        {
+            curStore[curKey] = curVal;
+            (curKey, curVal) = ("", "");
+            curValueType = ValueType.None;
+            hasDotInside = false;
+        }
+
+        ParseState PopFor(int count)
+        {
+            for (int i = 0; i < count-1; i++)
+                parseStates.Pop();
+            
+            return parseStates.Pop();
+        }
+
+        void HandleComma(char c)
+        {
+            if (c == ',')
+            {
+                if (parseStates.Peek() == ParseState.InArray)
+                {
+                    curState = parseStates.Pop();
+                    return;
+                }
+
+                curState = PopFor(3);
+            }
+            else
+            {
+                parseStates.Push(curState);
+                curState = ParseState.ExpectingEnd;
+            }
+        }
+
+        void PushValue()
+        {
+            if (parseStates.Peek() == ParseState.InArray)
+                curVal += StoreData.S_secretSep;
+            else
+                ResetValues();
+        }
+
         foreach (var c in input)
         {
             switch (curState)
@@ -80,10 +128,10 @@ public static class JsonParser
                         curVal += c;
                         parseStates.Push(curState);
                         curState = ParseState.ReadingValue;
-                        curValueType = ValueType.Int;
+                        curValueType = ValueType.Value;
                     }
                     else if (!char.IsWhiteSpace(c))
-                        ThrowExceptionWithComments($"Expected an array item or end of the array", c);
+                        ThrowExceptionWithComments("Expected an array item or end of the array", c);
                     break;
                 case ParseState.InArray when parseStates.Peek() == ParseState.None:
                     if (c == '{')
@@ -121,67 +169,84 @@ public static class JsonParser
                         curKey += c;
                     break;
                 case ParseState.ExpectingValue:
-                    if (c == '"')
+                    if (char.IsDigit(c))
                     {
-                        curValueType = ValueType.String;
-                        parseStates.Push(curState);
-                        curState = ParseState.ReadingValue;
-                    }
-                    else if (c == '[')
-                    {
-                        parseStates.Push(curState);
-                        curState = ParseState.InArray;
-                    }
-                    else if (char.IsDigit(c))
-                    {
-                        curValueType = ValueType.Int;
+                        curValueType = ValueType.Value;
                         parseStates.Push(curState);
                         curState = ParseState.ReadingValue;
                         curVal += c;
                     }
-                    else if (!char.IsWhiteSpace(c) && c != ':')
-                        ThrowExceptionWithComments($"Expected value for {curKey}", c);
+                    else switch (c)
+                    {
+                        case '"':
+                            curValueType = ValueType.String;
+                            parseStates.Push(curState);
+                            curState = ParseState.ReadingValue;
+                            break;
+                        case 't':
+                        case 'f':
+                            curValueType = ValueType.Bool;
+                            parseStates.Push(curState);
+                            curState = ParseState.ReadingValue;
+                            curVal += c;
+                            break;
+                        case 'n':
+                            curValueType = ValueType.Null;
+                            parseStates.Push(curState);
+                            curState = ParseState.ReadingValue;
+                            curVal += c;
+                            break;
+                        case '[':
+                            parseStates.Push(curState);
+                            curState = ParseState.InArray;
+                            break;
+                        default:
+                        {
+                            if (!char.IsWhiteSpace(c) && c != ':')
+                                ThrowExceptionWithComments($"Expected value for {curKey}", c);
+                            break;
+                        }
+                    }
                     break;
                 case ParseState.ReadingValue:
                     if (curValueType == ValueType.String && c == '"')
                     {
-                        if (parseStates.Peek() == ParseState.InArray)
-                            curVal += StoreData.S_secretSep;
-                        else
-                        {
-                            curStore[curKey] = curVal;
-                            (curKey, curVal) = ("", "");
-                        }               
+                        PushValue();
                         parseStates.Push(curState);
                         curState = ParseState.ExpectingEnd;
                     }
-                    else if (curValueType == ValueType.Int && !char.IsDigit(c)) //TODO: Make double
+                    else if (curValueType == ValueType.Value && !char.IsDigit(c))
                     {
-                        if (parseStates.Peek() == ParseState.InArray)
-                            curVal += StoreData.S_secretSep;
-                        else
+                        if (c == '.')
                         {
-                            curStore[curKey] = curVal;
-                            (curKey, curVal) = ("", "");
-                        } 
+                            if (hasDotInside)
+                                ThrowExceptionWithComments("Expected fractional part of value", c);
+                            else
+                                curVal += c;
+                            
+                            hasDotInside = true;
+                            break;
+                        }
+                        PushValue();
+                        HandleComma(c);
+                    }
+                    else if (curValueType == ValueType.Bool && !tfnAlph.Contains(c))
+                    {
+                        if (curVal.StartsWith('t') && curVal != "true")
+                            throw new Exception($"Expected true in line {lineNumber} on character {characterNumber}, got {curVal + c}");
+                        if (curVal.StartsWith('f') && curVal != "false")
+                            throw new Exception($"Expected false in line {lineNumber} on character {characterNumber}, got {curVal + c}");
                         
-                        if (c == ',')
-                        {
-                            if (parseStates.Peek() == ParseState.InArray)
-                            {
-                                curState = parseStates.Pop();
-                                break;
-                            }
-
-                            parseStates.Pop();
-                            parseStates.Pop();
-                            curState = parseStates.Pop();
-                        }
-                        else
-                        {
-                            parseStates.Push(curState);
-                            curState = ParseState.ExpectingEnd;
-                        }
+                        PushValue();
+                        HandleComma(c);
+                    }
+                    else if (curValueType == ValueType.Null && !tfnAlph.Contains(c))
+                    {
+                        if (curVal.StartsWith('n') && curVal != "null")
+                            throw new Exception($"Expected null in line {lineNumber} on character {characterNumber}, got {curVal + c}");
+                        
+                        PushValue();
+                        HandleComma(c);
                     }
                     else
                     {
@@ -207,10 +272,8 @@ public static class JsonParser
                             curState = ParseState.InArray;
                             break;
                         }
-
-                        parseStates.Pop();
-                        parseStates.Pop();
-                        curState = parseStates.Pop();
+                        
+                        curState = PopFor(3);
                     }
                     else if (c == ']')
                     {
@@ -221,23 +284,15 @@ public static class JsonParser
                             break;
                         }
                         
-                        curStore[curKey] = curVal;
-                        (curKey, curVal) = ("", "");
-                        parseStates.Pop();
-                        parseStates.Pop();
-                        parseStates.Pop();
+                        ResetValues();
+                        PopFor(3);
                     }
                     else if (c == '}')
                     {
                         if (parseStates.Peek() == ParseState.ReadingValue)
-                        {
-                            
-                        }
+                            PopFor(4);
                         else if (parseStates.Peek() == ParseState.ReadingKey)
-                        {
-                            parseStates.Pop();
-                            parseStates.Pop();
-                        }
+                            PopFor(2);
                         
                         dataTypes.Add((T)curStore.Clone());
                         curStore = new T();
