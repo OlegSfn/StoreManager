@@ -30,8 +30,6 @@ public static class JsonParser
             Console.WriteLine(line);
     }
 
-    //TODO: Add errors wilh line number
-    //TODO: Rename some words
     public static List<DataType> ReadJson<T>() where T : DataType, new()
     {
         int lineNumber = 1, characterNumber = 1;

@@ -6,13 +6,13 @@ public class DataBlock
 {
     public string Name { get; }
     public List<string> Params { get; }
-    public List<DataType> StoresData { get; }
+    public List<DataType> DataTypes { get; }
 
-    public DataBlock(string name, List<string> @params, List<DataType> storesData)
+    public DataBlock(string name, List<string> @params, List<DataType> dataTypes)
     {
         Name = name;
         Params = @params;
-        StoresData = storesData;
+        DataTypes = dataTypes;
     }
     
     public override string ToString()
@@ -26,18 +26,18 @@ public class DataBlock
     
     public string FormJson()
     {
-        if (StoresData.Count == 0)
+        if (DataTypes.Count == 0)
             return "{}";
         
-        if (StoresData.Count == 1)
-            return StoresData[0].ToString();
+        if (DataTypes.Count == 1)
+            return DataTypes[0].ToString();
         
         StringBuilder sb = new StringBuilder();
         sb.Append($"[{Environment.NewLine}");
-        for (int i = 0; i < StoresData.Count; i++)
+        for (int i = 0; i < DataTypes.Count; i++)
         {
-            sb.Append(StoresData[i]);
-            if (i < StoresData.Count - 1)
+            sb.Append(DataTypes[i]);
+            if (i < DataTypes.Count - 1)
                 sb.Append($",{Environment.NewLine}");
             else
                 sb.Append(Environment.NewLine);

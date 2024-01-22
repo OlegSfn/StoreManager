@@ -1,38 +1,47 @@
+[
 {
 	"store_id": 1,
-	"store_name": "Rodriguez, Schmidt and Martin",
-	"location": "West Victoria",
+	"store_name": "R",
+	"location": "We",
 	"employees": [
- 		Mary Williams,
-		Justin Ward,
-		Madison Evans,
-		Karen Thomas,
-		Michaela Hamilton,
-		Mary Hutchinson,
-		Richard Frank,
-		Levi Walter,
-		Nancy Middleton,
-		Heather James,
-		Nathaniel Smith,
-		Matthew Young,
-		Deborah Ortiz 
+ 		"Mar",
+		"D" 
 	],
 	"products": [
- 		name,
-		rich,
-		explain,
-		police,
-		raise,
-		almost,
-		while,
-		question,
-		total,
-		poor,
-		challenge,
-		author,
-		early,
-		crime,
-		media,
-		green 
+ 		"m",
+		"gen" 
+	]
+},
+{
+	"store_id": 2,
+	"store_name": "Vaughn-Ramirez",
+	"location": "Monicahaven",
+	"employees": [
+ 		"Emily Miller",
+		"Michael Gross" 
+	],
+	"products": [
+ 		"down",
+		"such",
+		"more",
+		"of" 
+	]
+},
+{
+	"store_id": 3,
+	"store_name": "English, Tran and Horne",
+	"location": "New Dustinview",
+	"employees": [
+ 		"Christopher Brewer",
+		"Thomas Rose",
+		"Jeffrey Martin" 
+	],
+	"products": [
+ 		"especially",
+		"government",
+		"official",
+		"wide",
+		"boy" 
 	]
 }
+]

@@ -40,20 +40,32 @@ public static class RouteManager
         MenuPoint consoleMode = new MenuPoint("Считать из консоли");
         Menu chooseModeMenu = new Menu(new[] { fileMode, consoleMode });
         chooseModeMenu.HandleUsing();
-        
-        if (chooseModeMenu.SelectedMenuPoint == 0)
+        try
         {
-            string filePath = InputHandler.GetFilePathToJson("Введите путь до json файла, из которого надо считать данные: ");
-            using StreamReader sr = new StreamReader(filePath);
-            Console.SetIn(sr);
-            DataManager.EnterData(filePath);
+            if (chooseModeMenu.SelectedMenuPoint == 0)
+            {
+                string filePath =
+                    InputHandler.GetFilePathToJson("Введите путь до json файла, из которого надо считать данные: ");
+                using StreamReader sr = new StreamReader(filePath);
+                Console.SetIn(sr);
+                DataManager.EnterData(filePath);
+            }
+            else
+            {
+                Console.WriteLine("Введите ваши данные:");
+                DataManager.EnterData();
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine(ex.Message);
+            InputHandler.WaitForUserInput("Нажмите любую кнопку, чтобы продолжить: ");
+        }
+        finally
+        {
             Console.SetIn(Storage.SStandardInput);
         }
-        else
-        {
-            Console.WriteLine("Введите ваши данные:");
-            DataManager.EnterData();
-        }
+
     }
     
     private static void FilterData()
@@ -63,7 +75,7 @@ public static class RouteManager
         savedMenu.HandleUsing();
         
         //TODO: check 2 arrays
-        DataType[] dataTypes = Storage.SdataBlocks[savedMenu.SelectedMenuPoint].StoresData.ToArray();
+        DataType[] dataTypes = Storage.SdataBlocks[savedMenu.SelectedMenuPoint].DataTypes.ToArray();
         if (dataTypes.Length == 0)
         {
             Printer.PrintWarning("Нет объектов для фильтирации");
@@ -85,7 +97,7 @@ public static class RouteManager
         Menu savedMenu = Menu.CreateChoiceMenu(savedData);
         savedMenu.HandleUsing();
         
-        DataType[] dataTypes = Storage.SdataBlocks[savedMenu.SelectedMenuPoint].StoresData.ToArray();
+        DataType[] dataTypes = Storage.SdataBlocks[savedMenu.SelectedMenuPoint].DataTypes.ToArray();
         if (dataTypes.Length == 0)
         {
             Printer.PrintWarning("Нет объектов для сортировки");
@@ -120,12 +132,29 @@ public static class RouteManager
             string filePath = InputHandler.GetValidPath("Введите путь, куда требуется сохранить данные: ");
             using StreamWriter sr = new StreamWriter(filePath);
             Console.SetOut(sr);
-            JsonParser.WriteJson(Storage.SdataBlocks[saveMenu.SelectedMenuPoint]);
-            Console.SetOut(Storage.SStandardOutput);
+            try
+            {
+                JsonParser.WriteJson(Storage.SdataBlocks[saveMenu.SelectedMenuPoint]);
+            }
+            finally
+            {
+                Console.SetOut(Storage.SStandardOutput);
+            }
             Printer.PrintInfo("Данные успешно записаны!");
         }
         else
-            JsonParser.WriteJson(Storage.SdataBlocks[saveMenu.SelectedMenuPoint]);
-        InputHandler.WaitForUserInput("Нажмите любую кнопку, чтобы продолжить: ");
+        {
+            MenuPoint jsonMode = new MenuPoint("В JSON формате ");
+            MenuPoint tableMode = new MenuPoint("В табличном формате");
+            Menu chooseViewModeMenu = new Menu(new[] { jsonMode, tableMode });
+            chooseViewModeMenu.HandleUsing();
+            if (chooseViewModeMenu.SelectedMenuPoint == 0)
+            {
+                JsonParser.WriteJson(Storage.SdataBlocks[saveMenu.SelectedMenuPoint]);
+                InputHandler.WaitForUserInput("Нажмите любую кнопку, чтобы продолжить: ");
+            }
+            else
+                Printer.ShowTable(Storage.SdataBlocks[saveMenu.SelectedMenuPoint].DataTypes.ToArray());
+        }
     }
 }

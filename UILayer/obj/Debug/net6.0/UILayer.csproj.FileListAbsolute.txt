@@ -10,3 +10,6 @@
 /Users/oleg_sfn/RiderProjects/StoreManager/UILayer/obj/Debug/net6.0/refint/UILayer.dll
 /Users/oleg_sfn/RiderProjects/StoreManager/UILayer/obj/Debug/net6.0/UILayer.pdb
 /Users/oleg_sfn/RiderProjects/StoreManager/UILayer/obj/Debug/net6.0/ref/UILayer.dll
+/Users/oleg_sfn/RiderProjects/StoreManager/UILayer/bin/Debug/net6.0/Entities.dll
+/Users/oleg_sfn/RiderProjects/StoreManager/UILayer/bin/Debug/net6.0/Entities.pdb
+/Users/oleg_sfn/RiderProjects/StoreManager/UILayer/obj/Debug/net6.0/UILayer.csproj.CopyComplete

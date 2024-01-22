@@ -66,15 +66,26 @@ public class StoreData : DataType
     //TODO: Form array string.
     public override string ToString()
     {
+        string employeesString = _noValStr, productsString = _noValStr;
+        if (Employees != null)
+            employeesString = string.Join($",{Environment.NewLine}\t\t", Employees.Select(x => $"\"{x}\""));
+        if (Products != null)
+            productsString = string.Join($",{Environment.NewLine}\t\t", Products.Select(x => $"\"{x}\""));
+        
         return $"{{{Environment.NewLine}" +
                $"\t\"store_id\": {Id.ToString() ?? _noValStr},{Environment.NewLine}" +
                $"\t\"store_name\": \"{Name ?? _noValStr}\",{Environment.NewLine}" +
                $"\t\"location\": \"{Location ?? _noValStr}\",{Environment.NewLine}" +
-               $"\t\"employees\": [\n \t\t{(Employees != null ? string.Join($",{Environment.NewLine}\t\t", Employees) : _noValStr)} {Environment.NewLine}\t],{Environment.NewLine}" +
-               $"\t\"products\": [\n \t\t{(Products != null ? string.Join($",{Environment.NewLine}\t\t", Products) : _noValStr)} {Environment.NewLine}\t]{Environment.NewLine}" +
+               $"\t\"employees\": [\n \t\t{employeesString} {Environment.NewLine}\t],{Environment.NewLine}" +
+               $"\t\"products\": [\n \t\t{productsString} {Environment.NewLine}\t]{Environment.NewLine}" +
                $"}}";
     }
-
+    
     public override string[] GetFieldNames()
         => new[] { "store_id", "store_name", "location", "employees", "products" };
+
+    public override string[] GetFieldValues()
+        => new[] { Id.ToString() ?? _noValStr, Name ?? _noValStr, Location ?? _noValStr, 
+            Employees != null ? string.Join($", ", Employees) : _noValStr, 
+            Products != null ? string.Join($", ", Products) : _noValStr };
 }

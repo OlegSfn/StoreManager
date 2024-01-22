@@ -261,7 +261,11 @@
         "frameworks": {
           "net6.0": {
             "targetAlias": "net6.0",
-            "projectReferences": {}
+            "projectReferences": {
+              "/Users/oleg_sfn/RiderProjects/StoreManager/Entities/Entities.csproj": {
+                "projectPath": "/Users/oleg_sfn/RiderProjects/StoreManager/Entities/Entities.csproj"
+              }
+            }
           }
         },
         "warningProperties": {
