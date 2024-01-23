@@ -26,6 +26,7 @@ public enum ValueType
 
 public static class JsonParser
 {
+    public static readonly string SExitString = "--Return--"; 
     
     public static void WriteJson(DataBlock dataBlock)
     {
@@ -94,7 +95,7 @@ public static class JsonParser
         void PushValue()
         {
             if (parseStates.Peek() == ParseState.InArray)
-                curVal += DataType.S_secretSep;
+                curVal += DataType.S_SecretSep;
             else
                 ResetValues();
         }
@@ -320,8 +321,7 @@ public static class JsonParser
 
         return dataTypes;
     }
-
-
+    
     public static List<DataType> ReadJsonRegex<T>() where T : DataType, new() 
     {
         List<DataType> dataTypes = new List<DataType>();
@@ -333,26 +333,25 @@ public static class JsonParser
             curStore["store_id"] = store.Groups[1].Value;
             curStore["store_name"] = store.Groups[2].Value;
             curStore["location"] = store.Groups[3].Value;
-            curStore["employees"] = string.Join(DataType.S_secretSep, store.Groups[4].Value.Split(',').Select(x => x.Trim('"')));
-            curStore["products"] = string.Join(DataType.S_secretSep, store.Groups[5].Value.Split(',').Select(x => x.Trim('"')));
+            curStore["employees"] = string.Join(DataType.S_SecretSep, store.Groups[4].Value.Split(',').Select(x => x.Trim('"')));
+            curStore["products"] = string.Join(DataType.S_SecretSep, store.Groups[5].Value.Split(',').Select(x => x.Trim('"')));
             dataTypes.Add(curStore);
             curStore = new T();
         }
         
         return dataTypes;
     }
-
-
+    
     private static string FormInput()
     {
         string line;
         StringBuilder sb = new StringBuilder();
-        while ((line = Console.ReadLine()) != "exit" && line != null)
+        while ((line = Console.ReadLine()) != SExitString && line != null)
         {
             sb.Append(line);
             sb.Append(Environment.NewLine);
         }
-
+        
         return sb.ToString();
     }
 

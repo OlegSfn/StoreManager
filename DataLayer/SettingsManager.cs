@@ -1,4 +1,3 @@
-using System.Text.Json;
 using DatabaseLayer;
 using Entities;
 using UILayer;
@@ -8,7 +7,7 @@ namespace DataLayer;
 public static class SettingsManager
 {
     private static string s_settingsFileName = "settings.json";
-    private static Menu SSettingsMenu;
+    private static Menu s_settingsMenu;
     
     public static void SaveSettings(bool silentSave)
     {
@@ -16,7 +15,7 @@ public static class SettingsManager
         {
             using StreamWriter sr = new StreamWriter(s_settingsFileName);
             Console.SetOut(sr);
-            JsonParser.WriteJson(Storage.ScurSettings);
+            JsonParser.WriteJson(Storage.S_CurSettings);
             if (!silentSave)
                 Printer.PrintInfo("Настройки сохранены.");
         }
@@ -26,7 +25,7 @@ public static class SettingsManager
         }
         finally
         {
-            Console.SetOut(Storage.SStandardOutput);
+            Console.SetOut(Storage.S_StandardOutput);
         }
     }
     
@@ -43,7 +42,7 @@ public static class SettingsManager
         {
             using StreamReader sr = new StreamReader(s_settingsFileName);
             Console.SetIn(sr);
-            Storage.ScurSettings = (SettingsData)JsonParser.ReadJson<SettingsData>()[0];
+            Storage.S_CurSettings = (SettingsData)JsonParser.ReadJson<SettingsData>()[0];
         }
         catch (Exception ex)
         {
@@ -52,12 +51,12 @@ public static class SettingsManager
         }
         finally
         {
-            Console.SetIn(Storage.SStandardInput);
+            Console.SetIn(Storage.S_StandardInput);
         }
     }
     public static void LoadDefaultSettings()
     {
-        Storage.ScurSettings = new SettingsData();
+        Storage.S_CurSettings = new SettingsData();
         SaveSettings(true);
     }
 
@@ -66,51 +65,47 @@ public static class SettingsManager
         int lastSelectedMenuPoint = 0;
         while (true)
         {
-            MenuPoint flushConsole = new MenuPoint($"Очищать консоль после работы с данными? ({Printer.boolToYesOrNo(Storage.ScurSettings.NeedFlushingConsole)})", ChangeFlushingOption);
-            MenuPoint enterData = new MenuPoint($"Откуда считывать данные? ({Printer.EnterDataOptionToString(Storage.ScurSettings.EnterDataChoice)})", ChangeDataGettingOption);
-            MenuPoint whereToShowResult = new MenuPoint($"Где показывать результат? ({Printer.WhereToShowResultOptionToString(Storage.ScurSettings.ShowResultChoice)})", ChangeWhereToShowResultOption);
-            MenuPoint howToShowResult = new MenuPoint($"Как показывать результат? ({Printer.HowToShowResultOptionToString(Storage.ScurSettings.ViewingMode)})", ChangeHowToShowResultOption);
-            MenuPoint instantFileOpening = new MenuPoint($"Открывать автоматически файл, в который были сохранены данные? ({Printer.boolToYesOrNo(Storage.ScurSettings.NeedOpenFileAfterWriting)})", ChangeInstantOpeningOption);
-            MenuPoint favouriteFileInput = new MenuPoint($"Любимый путь до файла ввода - {(Storage.ScurSettings.FavouriteInputFile != string.Empty ? Storage.ScurSettings.FavouriteInputFile : "не выбран")}", ChangeFavouriteInputFile);
-            MenuPoint favouriteFileOutput = new MenuPoint($"Любимый путь до файла вывода - {(Storage.ScurSettings.FavouriteOutputFile != string.Empty ? Storage.ScurSettings.FavouriteOutputFile : "не выбран")}", ChangeFavouriteOutputFile);
+            MenuPoint enterData = new MenuPoint($"Откуда считывать данные? ({Printer.EnterDataOptionToString(Storage.S_CurSettings.EnterDataChoice)})", ChangeDataGettingOption);
+            MenuPoint whereToShowResult = new MenuPoint($"Где показывать результат? ({Printer.WhereToShowResultOptionToString(Storage.S_CurSettings.ShowResultChoice)})", ChangeWhereToShowResultOption);
+            MenuPoint howToShowResult = new MenuPoint($"Как показывать результат? ({Printer.HowToShowResultOptionToString(Storage.S_CurSettings.ViewingMode)})", ChangeHowToShowResultOption);
+            MenuPoint instantFileOpening = new MenuPoint($"Открывать автоматически файл, в который были сохранены данные? ({Printer.BoolToYesOrNo(Storage.S_CurSettings.NeedOpenFileAfterWriting)})", ChangeInstantOpeningOption);
+            MenuPoint favouriteFileInput = new MenuPoint($"Любимый путь до файла ввода - {(Storage.S_CurSettings.FavouriteInputFile != string.Empty ? Storage.S_CurSettings.FavouriteInputFile : "не выбран")}", ChangeFavouriteInputFile);
+            MenuPoint favouriteFileOutput = new MenuPoint($"Любимый путь до файла вывода - {(Storage.S_CurSettings.FavouriteOutputFile != string.Empty ? Storage.S_CurSettings.FavouriteOutputFile : "не выбран")}", ChangeFavouriteOutputFile);
             MenuPoint returnToMainMenu = new MenuPoint("Вернуться в меню.");
-            Menu settingsMenu = new Menu(new[] { flushConsole, enterData, whereToShowResult, howToShowResult, instantFileOpening, favouriteFileInput, favouriteFileOutput, returnToMainMenu});
+            Menu settingsMenu = new Menu(new[] { enterData, whereToShowResult, howToShowResult, instantFileOpening, favouriteFileInput, favouriteFileOutput, returnToMainMenu});
             settingsMenu.SelectedMenuPoint = lastSelectedMenuPoint;
             settingsMenu.HandleUsing();
             SaveSettings(true);
             lastSelectedMenuPoint = settingsMenu.SelectedMenuPoint;
-            if (settingsMenu.SelectedMenuPoint == 7)
+            if (settingsMenu.SelectedMenuPoint == 6)
                 return;
         }
     }
 
-    private static void ChangeFlushingOption()
-        => Storage.ScurSettings.NeedFlushingConsole = !Storage.ScurSettings.NeedFlushingConsole;
-
     private static void ChangeDataGettingOption()
     {
         Printer.PrintWarning("1 - всегда сохранять в файл, 2 - всегда сохранять в консоль, 3 - всегда спрашивать");
-        Storage.ScurSettings.EnterDataChoice = (ConsoleFileOption)InputHandler.GetUserNumberInRange(1, 3);
+        Storage.S_CurSettings.EnterDataChoice = (ConsoleFileOption)InputHandler.GetUserNumberInRange(1, 3);
     }
     
     private static void ChangeWhereToShowResultOption()
     {
         Printer.PrintWarning("1 - всегда сохранять в файл, 2 - всегда сохранять в консоль, 3 - всегда спрашивать");
-        Storage.ScurSettings.ShowResultChoice = (ConsoleFileOption)InputHandler.GetUserNumberInRange(1, 3);
+        Storage.S_CurSettings.ShowResultChoice = (ConsoleFileOption)InputHandler.GetUserNumberInRange(1, 3);
     }
     
     private static void ChangeHowToShowResultOption()
     {
         Printer.PrintWarning("1 - в формате JSON, 2 - в формате таблицы, 3 - всегда спрашивать");
-        Storage.ScurSettings.ViewingMode = (ViewingMode)InputHandler.GetUserNumberInRange(1, 3);
+        Storage.S_CurSettings.ViewingMode = (ViewingMode)InputHandler.GetUserNumberInRange(1, 3);
     }
     
     private static void ChangeInstantOpeningOption()
-        => Storage.ScurSettings.NeedOpenFileAfterWriting = !Storage.ScurSettings.NeedOpenFileAfterWriting;
+        => Storage.S_CurSettings.NeedOpenFileAfterWriting = !Storage.S_CurSettings.NeedOpenFileAfterWriting;
     
     private static void ChangeFavouriteInputFile()
-        => Storage.ScurSettings.FavouriteInputFile = InputHandler.GetFilePathToJson("Введите путь до json файла: ");
+        => Storage.S_CurSettings.FavouriteInputFile = InputHandler.GetFilePathToJson("Введите путь до json файла: ");
     
     private static void ChangeFavouriteOutputFile()
-        => Storage.ScurSettings.FavouriteOutputFile = InputHandler.GetValidPath("Введите путь до файла, в который нужно сохранять результат: ");
+        => Storage.S_CurSettings.FavouriteOutputFile = InputHandler.GetValidPath("Введите путь до файла, в который нужно сохранять результат: ");
 }

@@ -1,4 +1,3 @@
-using System.Collections;
 using DatabaseLayer;
 using Entities;
 using UILayer;
@@ -17,7 +16,7 @@ public static class DataManager
             return;
         }
         DataBlock dataBlock = new DataBlock("Исходные данные", new List<string>{Path.GetFileName(filePath)}, storesData);
-        Storage.SdataBlocks.Add(dataBlock);
+        Storage.S_DataBlocks.Add(dataBlock);
     }
 
     public static DataBlock FilterData(DataType[] dataTypes, string fieldName, string value)
@@ -38,10 +37,5 @@ public static class DataManager
         Array.Sort(dataTypes,0,dataTypes.Length, Comparer<DataType>.Create((data1, data2) => 
             data1.CompareTo(data2, fieldName) * mult));
         return new DataBlock("Сортировка", new List<string> {fieldName, isReversed.ToString()}, dataTypes.ToList());
-    }
-
-    public static void SaveData()
-    {
-        
     }
 }

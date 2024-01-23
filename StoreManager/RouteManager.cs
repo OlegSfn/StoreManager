@@ -19,7 +19,7 @@ public static class RouteManager
         MenuPoint exit = new MenuPoint("Выйти.", () => Environment.Exit(0));
         
         menuPoints.Add(enterData);
-        if (Storage.SdataBlocks != null && Storage.SdataBlocks.Count > 0)
+        if (Storage.S_DataBlocks != null && Storage.S_DataBlocks.Count > 0)
         {
             menuPoints.Add(filterData);
             menuPoints.Add(sortData);
@@ -34,7 +34,7 @@ public static class RouteManager
     public static void HandleFirstUsing()
     {
         string question = "Вы ни разу не открывали это приложение, хотите настроить его?";
-        Storage.ScurSettings!.IsFirstUsing = false;
+        Storage.S_CurSettings!.IsFirstUsing = false;
         SettingsManager.SaveSettings(true);
         if (InputHandler.AskUserYesOrNo(question, ConsoleKey.Enter))
             SettingsManager.OpenSettings();
@@ -49,7 +49,7 @@ public static class RouteManager
     {
         void EnterDataViaConsole()
         {
-            Console.WriteLine("Введите ваши данные:");
+            Console.WriteLine($"Введите ваши данные (чтобы вернуться в программу в конце напишите \"{JsonParser.SExitString}\"):");
             try
             {
                 DataManager.EnterData();
@@ -65,7 +65,7 @@ public static class RouteManager
         {
             try
             {
-                string filePath = Storage.ScurSettings.FavouriteInputFile;
+                string filePath = Storage.S_CurSettings.FavouriteInputFile;
                 if (filePath == string.Empty)
                     filePath = InputHandler.GetFilePathToJson("Введите путь до json файла, из которого надо считать данные: ");
                 
@@ -80,11 +80,11 @@ public static class RouteManager
             }
             finally
             {
-                Console.SetIn(Storage.SStandardInput);
+                Console.SetIn(Storage.S_StandardInput);
             }
         }
 
-        switch (Storage.ScurSettings.EnterDataChoice)
+        switch (Storage.S_CurSettings.EnterDataChoice)
         {
             case ConsoleFileOption.AlwaysAskUser:
             {
@@ -109,12 +109,12 @@ public static class RouteManager
     
     private static void FilterData()
     {
-        string[] savedData = Storage.SdataBlocks.Select(x => x.ToString()).ToArray();
+        string[] savedData = Storage.S_DataBlocks.Select(x => x.ToString()).ToArray();
         Menu savedMenu = Menu.CreateChoiceMenu(savedData);
         savedMenu.HandleUsing();
         
         //TODO: check 2 arrays
-        DataType[] dataTypes = Storage.SdataBlocks[savedMenu.SelectedMenuPoint].DataTypes.ToArray();
+        DataType[] dataTypes = Storage.S_DataBlocks[savedMenu.SelectedMenuPoint].DataTypes.ToArray();
         if (dataTypes.Length == 0)
         {
             Printer.PrintWarning("Нет объектов для фильтирации");
@@ -132,11 +132,11 @@ public static class RouteManager
     
     private static void SortData()
     {
-        string[] savedData = Storage.SdataBlocks.Select(x => x.ToString()).ToArray();
+        string[] savedData = Storage.S_DataBlocks.Select(x => x.ToString()).ToArray();
         Menu savedMenu = Menu.CreateChoiceMenu(savedData);
         savedMenu.HandleUsing();
         
-        DataType[] dataTypes = Storage.SdataBlocks[savedMenu.SelectedMenuPoint].DataTypes.ToArray();
+        DataType[] dataTypes = Storage.S_DataBlocks[savedMenu.SelectedMenuPoint].DataTypes.ToArray();
         if (dataTypes.Length == 0)
         {
             Printer.PrintWarning("Нет объектов для сортировки");
@@ -157,13 +157,13 @@ public static class RouteManager
     
     private static void SaveData()
     {
-        string[] saveDatas = Storage.SdataBlocks.Select(x => x.ToString()).ToArray();
+        string[] saveDatas = Storage.S_DataBlocks.Select(x => x.ToString()).ToArray();
         Menu saveMenu = Menu.CreateChoiceMenu(saveDatas);
         saveMenu.HandleUsing();
         
         void ShowDataViaFile()
         {
-            string filePath = Storage.ScurSettings.FavouriteOutputFile;
+            string filePath = Storage.S_CurSettings.FavouriteOutputFile;
             if (filePath == string.Empty)
                 filePath = InputHandler.GetValidPath("Введите путь, куда требуется сохранить данные: ");
             
@@ -171,20 +171,21 @@ public static class RouteManager
             Console.SetOut(sr);
             try
             {
-                JsonParser.WriteJson(Storage.SdataBlocks[saveMenu.SelectedMenuPoint]);
-                if (Storage.ScurSettings.NeedOpenFileAfterWriting)
+                JsonParser.WriteJson(Storage.S_DataBlocks[saveMenu.SelectedMenuPoint]);
+                if (Storage.S_CurSettings.NeedOpenFileAfterWriting)
                     OpenFileInEditor(filePath);
             }
             finally
             {
-                Console.SetOut(Storage.SStandardOutput);
+                Console.SetOut(Storage.S_StandardOutput);
             }
 
             Printer.PrintInfo("Данные успешно записаны!");
         }
+        
         void ShowDataViaConsole()
         {
-            if (Storage.ScurSettings.ViewingMode == ViewingMode.AskUser)
+            if (Storage.S_CurSettings.ViewingMode == ViewingMode.AskUser)
             {
                 MenuPoint jsonMode = new MenuPoint("В JSON формате ");
                 MenuPoint tableMode = new MenuPoint("В табличном формате");
@@ -192,22 +193,22 @@ public static class RouteManager
                 chooseViewModeMenu.HandleUsing();
                 if (chooseViewModeMenu.SelectedMenuPoint == 0)
                 {
-                    JsonParser.WriteJson(Storage.SdataBlocks[saveMenu.SelectedMenuPoint]);
+                    JsonParser.WriteJson(Storage.S_DataBlocks[saveMenu.SelectedMenuPoint]);
                     InputHandler.WaitForUserInput("Нажмите любую кнопку, чтобы продолжить: ");
                 }
                 else
-                    Printer.ShowTable(Storage.SdataBlocks[saveMenu.SelectedMenuPoint].DataTypes.ToArray());
+                    Printer.ShowTable(Storage.S_DataBlocks[saveMenu.SelectedMenuPoint].DataTypes.ToArray());
             }
-            else if (Storage.ScurSettings.ViewingMode == ViewingMode.Json)
+            else if (Storage.S_CurSettings.ViewingMode == ViewingMode.Json)
             {
-                JsonParser.WriteJson(Storage.SdataBlocks[saveMenu.SelectedMenuPoint]);
+                JsonParser.WriteJson(Storage.S_DataBlocks[saveMenu.SelectedMenuPoint]);
                 InputHandler.WaitForUserInput("Нажмите любую кнопку, чтобы продолжить: ");
             }
             else
-                Printer.ShowTable(Storage.SdataBlocks[saveMenu.SelectedMenuPoint].DataTypes.ToArray());
+                Printer.ShowTable(Storage.S_DataBlocks[saveMenu.SelectedMenuPoint].DataTypes.ToArray());
         }
 
-        switch (Storage.ScurSettings.ShowResultChoice)
+        switch (Storage.S_CurSettings.ShowResultChoice)
         {
             case ConsoleFileOption.AlwaysAskUser:
             {

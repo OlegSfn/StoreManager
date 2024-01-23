@@ -1,9 +1,8 @@
-using System.Diagnostics;
 using Entities;
 
 namespace UILayer;
 
-public class Printer
+public static class Printer
 {
     private static int s_maxLen = 20;
     private static int s_maxColumnsOnScreen = 5;
@@ -11,20 +10,148 @@ public class Printer
     // Thread vars.
     private static int s_lastConsoleWidth = -1;
     private static bool s_threadAlive = false;
-    private static DataType[]? s_colleges = null;
+    private static DataType[]? s_dataTypes = null;
     private static int s_startIndex = 0;
     
-    public static void PrintCountedArray<T>(T[]? array)
+    public static void ShowTable(DataType[]? result)
     {
-        if (array == null)
-            return;
-        
-        int counter = 1;
-        foreach (T element in array)
+        s_startIndex = 0;
+        s_lastConsoleWidth = Console.WindowWidth;
+        s_dataTypes = result;
+        s_threadAlive = true;
+        Thread widthChangerThread = new Thread(CheckWidth);
+        widthChangerThread.Start();
+
+        int deletedColumns = 0;
+        while (true)
         {
-            Console.WriteLine($"{counter}. {element}");
-            counter++;
+            s_maxLen = GetMaxLenOfColByConsoleWidth(s_maxColumnsOnScreen);
+            PrintTable(result, ' ', s_startIndex, s_maxColumnsOnScreen);
+            while (!Console.KeyAvailable)
+            {
+                
+            }
+            
+            ConsoleKey userInp = Console.ReadKey(true).Key;
+            if (userInp == ConsoleKey.LeftArrow)
+            {
+                if (s_startIndex == 0)
+                    continue;
+                s_startIndex--;
+            }
+            else if (userInp == ConsoleKey.RightArrow)
+            {
+                if (s_startIndex + s_maxColumnsOnScreen >= result[0].GetFieldNames().Length - deletedColumns || 
+                    GetMaxLenOfColByConsoleWidth(s_maxColumnsOnScreen+1) < 3)
+                    continue;
+                s_startIndex++;
+            }
+            else if (userInp == ConsoleKey.UpArrow)
+            {
+                if (s_maxColumnsOnScreen == result[0].GetFieldNames().Length - deletedColumns || 
+                    GetMaxLenOfColByConsoleWidth(s_maxColumnsOnScreen+1) < 3)
+                    continue;
+
+                s_maxColumnsOnScreen++;
+                if (s_startIndex + s_maxColumnsOnScreen > result[0].GetFieldNames().Length - deletedColumns)
+                {
+                    if (s_startIndex == 0)
+                        s_maxColumnsOnScreen--;
+                    else
+                        s_startIndex--;
+                }
+            }
+            else if (userInp == ConsoleKey.DownArrow)
+            {
+                if (s_maxColumnsOnScreen == 1)
+                    continue;
+                s_maxColumnsOnScreen--;
+            }
+            else if (userInp == ConsoleKey.Enter)
+            {
+                s_threadAlive = false;
+                widthChangerThread.Join();
+                Console.WriteLine();
+                return;
+            }
         }
+    }
+    
+    public static void FullClear()
+    {
+        Console.Clear();
+        Console.Write("\x1b[3J");
+    }
+    
+    public static void PrintInfo(string msg, bool endWithNewLine = true)
+    {
+        Console.ForegroundColor = ConsoleColor.Green;
+
+        if (endWithNewLine)
+            Console.WriteLine(msg);
+        else
+            Console.Write(msg);
+
+        Console.ResetColor();
+    }
+    
+    public static void PrintWarning(string msg, bool endWithNewLine = true)
+    {
+        Console.ForegroundColor = ConsoleColor.Yellow;
+
+        if (endWithNewLine)
+            Console.WriteLine(msg);
+        else
+            Console.Write(msg);
+
+        Console.ResetColor();
+    }
+    
+    public static void PrintError(string msg, bool endWithNewLine = true)
+    {
+        Console.ForegroundColor = ConsoleColor.Red;
+
+        if (endWithNewLine)
+            Console.WriteLine(msg);
+        else
+            Console.Write(msg);
+
+        Console.ResetColor();
+    }
+    
+    public static string BoolToYesOrNo(bool b) => b ? "Да" : "Нет";
+
+    public static string WhereToShowResultOptionToString(ConsoleFileOption consoleFileOption)
+    {
+        return consoleFileOption switch
+        {
+            ConsoleFileOption.AlwaysAskUser => "Всегда спрашивать",
+            ConsoleFileOption.AlwaysWithFile => "Всегда сохранять в файл",
+            ConsoleFileOption.AlwaysWithConsole => "Всегда показывать в консоли",
+            _ => throw new ArgumentOutOfRangeException(nameof(consoleFileOption), consoleFileOption, null)
+        };
+    }
+    
+    public static string HowToShowResultOptionToString(ViewingMode viewingMode)
+    {
+        return viewingMode switch
+        {
+            ViewingMode.AskUser => "Всегда спрашивать",
+            ViewingMode.Json => "В формате JSON",
+            ViewingMode.Table => "В формате таблицы",
+            _ => throw new ArgumentOutOfRangeException(nameof(viewingMode), viewingMode, null)
+        };
+    }
+    
+    public static string EnterDataOptionToString(ConsoleFileOption consoleFileOption)
+    {
+        return consoleFileOption switch
+        {
+            ConsoleFileOption.AlwaysAskUser => "Всегда спрашивать",
+            ConsoleFileOption.AlwaysWithFile => "Всегда считывать из файла",
+            ConsoleFileOption.AlwaysWithConsole => "Всегда считывать из консоли",
+            _ => throw new ArgumentOutOfRangeException(nameof(consoleFileOption), consoleFileOption, null)
+        };
     }
     
     private static void PrintTable(DataType[]? array, char sep, int startIndex, int count)
@@ -87,73 +214,6 @@ public class Printer
         return readableArr.ToArray();
     }
     
-    public static void ShowTable(DataType[]? result)
-    {
-        s_startIndex = 0;
-        s_lastConsoleWidth = Console.WindowWidth;
-        s_colleges = result;
-        s_threadAlive = true;
-        Thread widthChangerThread = new Thread(CheckWidth);
-        widthChangerThread.Start();
-
-        int deletedColumns = 0;
-        while (true)
-        {
-            s_maxLen = GetMaxLenOfColByConsoleWidth(s_maxColumnsOnScreen);
-            PrintTable(result, ' ', s_startIndex, s_maxColumnsOnScreen);
-            while (!Console.KeyAvailable)
-            {
-                
-            }
-            
-            ConsoleKey userInp = Console.ReadKey(true).Key;
-            if (userInp == ConsoleKey.LeftArrow)
-            {
-                if (s_startIndex == 0)
-                    continue;
-                s_startIndex--;
-            }
-            else if (userInp == ConsoleKey.RightArrow)
-            {
-                if (s_startIndex + s_maxColumnsOnScreen >= result[0].GetFieldNames().Length - deletedColumns || 
-                    GetMaxLenOfColByConsoleWidth(s_maxColumnsOnScreen+1) < 3)
-                    continue;
-                s_startIndex++;
-            }
-            else if (userInp == ConsoleKey.UpArrow)
-            {
-                if (s_maxColumnsOnScreen == result[0].GetFieldNames().Length - deletedColumns || 
-                    GetMaxLenOfColByConsoleWidth(s_maxColumnsOnScreen+1) < 3)
-                    continue;
-
-                s_maxColumnsOnScreen++;
-                if (s_startIndex + s_maxColumnsOnScreen > result[0].GetFieldNames().Length - deletedColumns)
-                {
-                    if (s_startIndex == 0)
-                        s_maxColumnsOnScreen--;
-                    else
-                        s_startIndex--;
-                }
-            }
-            else if (userInp == ConsoleKey.DownArrow)
-            {
-                if (s_maxColumnsOnScreen == 1)
-                    continue;
-                s_maxColumnsOnScreen--;
-            }
-            else if (userInp == ConsoleKey.Enter)
-            {
-                s_threadAlive = false;
-                widthChangerThread.Join();
-                Console.WriteLine();
-                return;
-            }
-        }
-    }
-    
-    /// <summary>
-    /// Monitors and adjusts the width of the console window dynamically while the table is being inspected.
-    /// </summary>
     private static void CheckWidth()
     {
         while (s_threadAlive)
@@ -161,7 +221,7 @@ public class Printer
             if (Console.WindowWidth != s_lastConsoleWidth)
             {
                 s_maxLen = GetMaxLenOfColByConsoleWidth(s_maxColumnsOnScreen);
-                PrintTable(s_colleges, ' ', s_startIndex, s_maxColumnsOnScreen);
+                PrintTable(s_dataTypes, ' ', s_startIndex, s_maxColumnsOnScreen);
                 s_lastConsoleWidth = Console.WindowWidth;
             }
             Thread.Sleep(16);
@@ -169,113 +229,8 @@ public class Printer
 
     }
     
-    /// <summary>
-    /// Calculates the maximum length of a column based on the current console window width and the specified column count.
-    /// </summary>
-    /// <param name="colCount">The number of columns to consider for calculating the maximum length.</param>
-    /// <returns>The maximum length of a column based on the console window width and column count.</returns>
     private static int GetMaxLenOfColByConsoleWidth(int colCount)
     {
         return (Console.WindowWidth-(colCount-1)*4) / colCount;
-    }
-
-    /// <summary>
-    /// Opens the specified file in the default associated application.
-    /// </summary>
-    /// <param name="filePath">The path to the file to be opened.</param>
-    private static void OpenFileInEditor(string filePath)
-    {
-        try
-        {
-            using var process = new Process();
-            process.StartInfo = new ProcessStartInfo
-            {
-                UseShellExecute = true,
-                FileName = filePath
-            };
-            process.Start();
-        }
-        catch (Exception)
-        {
-            Console.WriteLine("Произошла ошибка при запуске отдельного приложения.");
-        }
-    }
-    
-    
-    public static void FullClear()
-    {
-        Console.Clear();
-        Console.Write("\x1b[3J");
-    }
-    
-    public static void PrintInfo(string msg, bool endWithNewLine = true)
-    {
-        Console.ForegroundColor = ConsoleColor.Green;
-
-        if (endWithNewLine)
-            Console.WriteLine(msg);
-        else
-            Console.Write(msg);
-
-        Console.ResetColor();
-    }
-    
-    public static void PrintWarning(string msg, bool endWithNewLine = true)
-    {
-        Console.ForegroundColor = ConsoleColor.Yellow;
-
-        if (endWithNewLine)
-            Console.WriteLine(msg);
-        else
-            Console.Write(msg);
-
-        Console.ResetColor();
-    }
-    
-    public static void PrintError(string msg, bool endWithNewLine = true)
-    {
-        Console.ForegroundColor = ConsoleColor.Red;
-
-        if (endWithNewLine)
-            Console.WriteLine(msg);
-        else
-            Console.Write(msg);
-
-        Console.ResetColor();
-    }
-    
-    public static string boolToYesOrNo(bool b) => b ? "Да" : "Нет";
-
-    public static string WhereToShowResultOptionToString(ConsoleFileOption consoleFileOption)
-    {
-        return consoleFileOption switch
-        {
-            ConsoleFileOption.AlwaysAskUser => "Всегда спрашивать",
-            ConsoleFileOption.AlwaysWithFile => "Всегда сохранять в файл",
-            ConsoleFileOption.AlwaysWithConsole => "Всегда показывать в консоли",
-            _ => throw new ArgumentOutOfRangeException(nameof(consoleFileOption), consoleFileOption, null)
-        };
-    }
-    
-    public static string HowToShowResultOptionToString(ViewingMode viewingMode)
-    {
-        return viewingMode switch
-        {
-            ViewingMode.AskUser => "Всегда спрашивать",
-            ViewingMode.Json => "В формате JSON",
-            ViewingMode.Table => "В формате таблицы",
-            _ => throw new ArgumentOutOfRangeException(nameof(viewingMode), viewingMode, null)
-        };
-    }
-    
-    public static string EnterDataOptionToString(ConsoleFileOption consoleFileOption)
-    {
-        return consoleFileOption switch
-        {
-            ConsoleFileOption.AlwaysAskUser => "Всегда спрашивать",
-            ConsoleFileOption.AlwaysWithFile => "Всегда считывать из файла",
-            ConsoleFileOption.AlwaysWithConsole => "Всегда считывать из консоли",
-            _ => throw new ArgumentOutOfRangeException(nameof(consoleFileOption), consoleFileOption, null)
-        };
     }
 }

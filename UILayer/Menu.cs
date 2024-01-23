@@ -2,7 +2,6 @@ namespace UILayer;
 
 public class Menu
 {
-    //TODO: Maybe add selected menuPoint;
     private readonly MenuPoint[] _menuPoints;
     private readonly string?_header;
     
@@ -14,41 +13,6 @@ public class Menu
         _header = header;
     }
     
-    
-    public void Show()
-    {
-        Printer.FullClear();
-        if (!string.IsNullOrEmpty(_header))
-            Console.WriteLine(_header);
-        
-        for (int i = 0; i < _menuPoints.Length; i++)
-        {
-            if (i == SelectedMenuPoint)
-                Console.WriteLine($"{i+1}. {_menuPoints[i].Text}\t<----");
-            else
-                Console.WriteLine($"{i+1}. {_menuPoints[i].Text}");
-        }
-    }
-
-    public bool PressMenuPoint(int index)
-    {
-        if (0 > index || index >= _menuPoints.Length) return false;
-
-        SelectedMenuPoint = index;
-        _menuPoints[index].OnMenuPointClick.Invoke();
-        return true;
-    }
-
-
-    public void PressSelectedMenuPoint()
-        => PressMenuPoint(SelectedMenuPoint);
-    
-    public void SelectNextMenuPoint() 
-        => SelectedMenuPoint = Math.Clamp(SelectedMenuPoint+1, 0, _menuPoints.Length-1);
-
-    public void SelectPreviousMenuPoint()
-        => SelectedMenuPoint = Math.Clamp(SelectedMenuPoint-1, 0, _menuPoints.Length-1);
-
     public void HandleUsing()
     {
         Show();
@@ -87,4 +51,37 @@ public class Menu
 
         return createdMenu;
     }
+    
+    private void Show()
+    {
+        Printer.FullClear();
+        if (!string.IsNullOrEmpty(_header))
+            Console.WriteLine(_header);
+        
+        for (int i = 0; i < _menuPoints.Length; i++)
+        {
+            if (i == SelectedMenuPoint)
+                Console.WriteLine($"{i+1}. {_menuPoints[i].Text}\t<----");
+            else
+                Console.WriteLine($"{i+1}. {_menuPoints[i].Text}");
+        }
+    }
+
+    private bool PressMenuPoint(int index)
+    {
+        if (0 > index || index >= _menuPoints.Length) return false;
+
+        SelectedMenuPoint = index;
+        _menuPoints[index].OnMenuPointClick.Invoke();
+        return true;
+    }
+    
+    private void PressSelectedMenuPoint()
+        => PressMenuPoint(SelectedMenuPoint);
+
+    private void SelectNextMenuPoint() 
+        => SelectedMenuPoint = Math.Clamp(SelectedMenuPoint+1, 0, _menuPoints.Length-1);
+
+    private void SelectPreviousMenuPoint()
+        => SelectedMenuPoint = Math.Clamp(SelectedMenuPoint-1, 0, _menuPoints.Length-1);
 }

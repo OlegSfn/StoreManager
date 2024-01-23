@@ -1,13 +1,13 @@
 namespace Entities;
 using System.Collections;
-//TODO: Maybe dont need to clone
+
 public class StoreData : DataType
 {
-    public int? Id { get; set; }
-    public string? Name { get; set; }
-    public string? Location { get; set; }
-    public string[]? Employees { get; set; }
-    public string[]? Products { get; set; }
+    private int? _id;
+    private string? _name;
+    private string? _location;
+    private string[]? _employees;
+    private string[]? _products;
 
     private readonly string _noValStr = "Нет значения";
     
@@ -17,11 +17,12 @@ public class StoreData : DataType
         {
             return fieldName switch
             {
-                "store_id" => Id.ToString() ?? _noValStr,
-                "store_name" => Name ?? _noValStr,
-                "location" => Location ?? _noValStr,
-                "employees" => Employees != null ? string.Join(',', Employees) : _noValStr,
-                "products" => Products != null ? string.Join(',', Products) : _noValStr
+                "store_id" => _id.ToString() ?? _noValStr,
+                "store_name" => _name ?? _noValStr,
+                "location" => _location ?? _noValStr,
+                "employees" => _employees != null ? string.Join(',', _employees) : _noValStr,
+                "products" => _products != null ? string.Join(',', _products) : _noValStr,
+                _ => throw new ArgumentOutOfRangeException(nameof(fieldName), fieldName, null)
             };
         }
         
@@ -30,19 +31,19 @@ public class StoreData : DataType
             switch (fieldName)
             {
                 case "store_id":
-                    Id = int.Parse(value);
+                    _id = int.Parse(value);
                     break;
                 case "store_name":
-                    Name = value;
+                    _name = value;
                     break;
                 case "location":
-                    Location = value;
+                    _location = value;
                     break;
                 case "employees":
-                    Employees = value.Split(S_secretSep, StringSplitOptions.RemoveEmptyEntries);
+                    _employees = value.Split(S_SecretSep, StringSplitOptions.RemoveEmptyEntries);
                     break;
                 case "products":
-                    Products = value.Split(S_secretSep, StringSplitOptions.RemoveEmptyEntries);
+                    _products = value.Split(S_SecretSep, StringSplitOptions.RemoveEmptyEntries);
                     break;
             }
         }
@@ -53,27 +54,27 @@ public class StoreData : DataType
         StoreData storeData = (StoreData)dataType;
         return fieldName switch
         {
-            "store_id" => Comparer.DefaultInvariant.Compare(Id, storeData.Id),
-            "store_name" => Comparer.DefaultInvariant.Compare(Name, storeData.Name),
-            "location" => Comparer.DefaultInvariant.Compare(Location, storeData.Location),
-            "employees" => Comparer.DefaultInvariant.Compare(Employees?.Length ?? 0, storeData.Employees?.Length ?? 0),
-            "products" => Comparer.DefaultInvariant.Compare(Products?.Length ?? 0, storeData.Products?.Length ?? 0)
+            "store_id" => Comparer.DefaultInvariant.Compare(_id, storeData._id),
+            "store_name" => Comparer.DefaultInvariant.Compare(_name, storeData._name),
+            "location" => Comparer.DefaultInvariant.Compare(_location, storeData._location),
+            "employees" => Comparer.DefaultInvariant.Compare(_employees?.Length ?? 0, storeData._employees?.Length ?? 0),
+            "products" => Comparer.DefaultInvariant.Compare(_products?.Length ?? 0, storeData._products?.Length ?? 0),
+            _ => throw new ArgumentOutOfRangeException(nameof(fieldName), fieldName, null)
         };
     }
 
-    //TODO: Form array string.
     public override string ToString()
     {
         string employeesString = _noValStr, productsString = _noValStr;
-        if (Employees != null)
-            employeesString = string.Join($",{Environment.NewLine}\t\t", Employees.Select(x => $"\"{x}\""));
-        if (Products != null)
-            productsString = string.Join($",{Environment.NewLine}\t\t", Products.Select(x => $"\"{x}\""));
+        if (_employees != null)
+            employeesString = string.Join($",{Environment.NewLine}\t\t", _employees.Select(x => $"\"{x}\""));
+        if (_products != null)
+            productsString = string.Join($",{Environment.NewLine}\t\t", _products.Select(x => $"\"{x}\""));
         
         return $"{{{Environment.NewLine}" +
-               $"\t\"store_id\": {Id.ToString() ?? _noValStr},{Environment.NewLine}" +
-               $"\t\"store_name\": \"{Name ?? _noValStr}\",{Environment.NewLine}" +
-               $"\t\"location\": \"{Location ?? _noValStr}\",{Environment.NewLine}" +
+               $"\t\"store_id\": {_id.ToString() ?? _noValStr},{Environment.NewLine}" +
+               $"\t\"store_name\": \"{_name ?? _noValStr}\",{Environment.NewLine}" +
+               $"\t\"location\": \"{_location ?? _noValStr}\",{Environment.NewLine}" +
                $"\t\"employees\": [\n \t\t{employeesString} {Environment.NewLine}\t],{Environment.NewLine}" +
                $"\t\"products\": [\n \t\t{productsString} {Environment.NewLine}\t]{Environment.NewLine}" +
                $"}}";
@@ -83,7 +84,7 @@ public class StoreData : DataType
         => new[] { "store_id", "store_name", "location", "employees", "products" };
 
     public override string[] GetFieldValues()
-        => new[] { Id.ToString() ?? _noValStr, Name ?? _noValStr, Location ?? _noValStr, 
-            Employees != null ? string.Join($", ", Employees) : _noValStr, 
-            Products != null ? string.Join($", ", Products) : _noValStr };
+        => new[] { _id.ToString() ?? _noValStr, _name ?? _noValStr, _location ?? _noValStr, 
+            _employees != null ? string.Join($", ", _employees) : _noValStr, 
+            _products != null ? string.Join($", ", _products) : _noValStr };
 }

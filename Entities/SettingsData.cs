@@ -14,19 +14,18 @@ public enum ViewingMode
     AskUser = 3
 }
 
-public class SettingsData : DataType
+public sealed class SettingsData : DataType
 {
-    public bool IsFirstUsing { get; set; } = true; // done
-    public bool NeedFlushingConsole { get; set; } = true;
-    public bool NeedOpenFileAfterWriting { get; set; } = true; // done
+    public bool IsFirstUsing { get; set; } = true;
+    public bool NeedOpenFileAfterWriting { get; set; } = true;
     
     public string FavouriteInputFile { get; set; } = string.Empty; // done
     public string FavouriteOutputFile { get; set; } = string.Empty; // done
     
-    public ConsoleFileOption EnterDataChoice { get; set; } = ConsoleFileOption.AlwaysAskUser; // done
-    public ConsoleFileOption ShowResultChoice { get; set; } = ConsoleFileOption.AlwaysAskUser; // done
+    public ConsoleFileOption EnterDataChoice { get; set; } = ConsoleFileOption.AlwaysAskUser;
+    public ConsoleFileOption ShowResultChoice { get; set; } = ConsoleFileOption.AlwaysAskUser;
 
-    public ViewingMode ViewingMode { get; set; } = ViewingMode.AskUser; // done
+    public ViewingMode ViewingMode { get; set; } = ViewingMode.AskUser;
 
     public override string[] GetFieldNames() => Array.Empty<string>();
 
@@ -42,9 +41,6 @@ public class SettingsData : DataType
             {
                 case "IsFirstUsing":
                     IsFirstUsing = value == "true";
-                    break;
-                case "NeedFlushingConsole":
-                    NeedFlushingConsole = value == "true";;
                     break;
                 case "NeedOpenFileAfterWriting":
                     NeedOpenFileAfterWriting = value == "true";;
@@ -74,13 +70,12 @@ public class SettingsData : DataType
     {
         return $"{{{Environment.NewLine}" +
                $"\t\"IsFirstUsing\": {IsFirstUsing.ToString().ToLower()},{Environment.NewLine}" +
-               $"\t\"NeedFlushingConsole\": {NeedFlushingConsole.ToString().ToLower()},{Environment.NewLine}" +
                $"\t\"NeedOpenFileAfterWriting\": {NeedOpenFileAfterWriting.ToString().ToLower()},{Environment.NewLine}" +
                $"\t\"FavouriteInputFile\": \"{FavouriteInputFile}\",{Environment.NewLine}" +
                $"\t\"FavouriteOutputFile\": \"{FavouriteOutputFile}\",{Environment.NewLine}" +
                $"\t\"EnterDataChoice\": {(int)EnterDataChoice},{Environment.NewLine}" +
                $"\t\"ShowResultChoice\": {(int)ShowResultChoice},{Environment.NewLine}" +
-               $"\t\"ViewingMode\": {(int)ViewingMode},{Environment.NewLine}" +
+               $"\t\"ViewingMode\": {(int)ViewingMode}{Environment.NewLine}" +
                $"}}";
     }
 }

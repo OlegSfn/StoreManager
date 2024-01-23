@@ -2,11 +2,12 @@ using System.Text;
 
 namespace Entities;
 
-public class DataBlock
+public sealed class DataBlock
 {
-    public string Name { get; }
-    public List<string> Params { get; }
     public List<DataType> DataTypes { get; }
+    
+    private string Name { get; }
+    private List<string> Params { get; }
 
     public DataBlock(string name, List<string> @params, List<DataType> dataTypes)
     {

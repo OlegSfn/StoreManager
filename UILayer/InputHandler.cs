@@ -1,6 +1,6 @@
 namespace UILayer;
 
-public class InputHandler
+public static class InputHandler
 {
     public static string SafeReadline(string msg, string errorMsg)
     {
