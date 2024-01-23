@@ -18,7 +18,8 @@ internal static class Program
         //string jsonData = File.ReadAllText("/Users/oleg_sfn/Downloads/emptyObj.json");
         //StoreData store = JsonSerializer.Deserialize<StoreData>(jsonData);
         //Console.WriteLine(store);
-
+        
+        
         Storage.S_StandardInput = Console.In;
         Storage.S_StandardOutput = Console.Out;
         SettingsManager.LoadSettings();

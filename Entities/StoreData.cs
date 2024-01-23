@@ -1,7 +1,7 @@
 namespace Entities;
 using System.Collections;
 
-public class StoreData : DataType
+public sealed class StoreData : PresentationDataType
 {
     private int? _id;
     private string? _name;

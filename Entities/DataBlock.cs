@@ -4,12 +4,12 @@ namespace Entities;
 
 public sealed class DataBlock
 {
-    public List<DataType> DataTypes { get; }
+    public List<PresentationDataType> DataTypes { get; }
     
     private string Name { get; }
     private List<string> Params { get; }
 
-    public DataBlock(string name, List<string> @params, List<DataType> dataTypes)
+    public DataBlock(string name, List<string> @params, List<PresentationDataType> dataTypes)
     {
         Name = name;
         Params = @params;

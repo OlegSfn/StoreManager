@@ -39,13 +39,13 @@ public static class JsonParser
         Console.WriteLine(dataType);
     }
 
-    public static List<DataType> ReadJson<T>() where T : DataType, new()
+    public static List<T> ReadJson<T>() where T : DataType, new()
     {
         int lineNumber = 1, characterNumber = 1;
         string input = FormInput();
         Stack<ParseState> parseStates = new Stack<ParseState>();
         ParseState curState = ParseState.None;
-        List<DataType> dataTypes = new List<DataType>();
+        List<T> dataTypes = new List<T>();
         T curStore = new T();
         string curKey = "", curVal = "";
         bool hasDotInside = false;
@@ -301,7 +301,7 @@ public static class JsonParser
                         else if (parseStates.Peek() == ParseState.ReadingKey)
                             PopFor(2);
                         
-                        dataTypes.Add((T)curStore.Clone());
+                        dataTypes.Add(curStore);
                         curStore = new T();
                     }
                     else if (!char.IsWhiteSpace(c))

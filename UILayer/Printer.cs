@@ -10,10 +10,10 @@ public static class Printer
     // Thread vars.
     private static int s_lastConsoleWidth = -1;
     private static bool s_threadAlive = false;
-    private static DataType[]? s_dataTypes = null;
+    private static PresentationDataType[]? s_dataTypes = null;
     private static int s_startIndex = 0;
     
-    public static void ShowTable(DataType[]? result)
+    public static void ShowTable(PresentationDataType[]? result)
     {
         s_startIndex = 0;
         s_lastConsoleWidth = Console.WindowWidth;
@@ -154,7 +154,7 @@ public static class Printer
         };
     }
     
-    private static void PrintTable(DataType[]? array, char sep, int startIndex, int count)
+    private static void PrintTable(PresentationDataType[]? array, char sep, int startIndex, int count)
     {
         if (array == null)
             return;
@@ -163,7 +163,7 @@ public static class Printer
         int[] emptyColIndexes = Array.Empty<int>();
         
         PrintLine(MakeReadableArray(array[0].GetFieldNames(), s_maxLen, emptyColIndexes), sep, startIndex, count);
-        foreach (DataType row in array)
+        foreach (PresentationDataType row in array)
             PrintLine(MakeReadableArray(row.GetFieldValues(), s_maxLen, emptyColIndexes), sep, startIndex, count);
         PrintWarning("Чтобы перемещаться по столбцам используйте стрелки влево/вправо, чтобы изменить кол-во столбцов стрелки вверх/вниз, чтобы закончить нажмите Enter: ");
     }

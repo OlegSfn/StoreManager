@@ -114,7 +114,7 @@ public static class RouteManager
         savedMenu.HandleUsing();
         
         //TODO: check 2 arrays
-        DataType[] dataTypes = Storage.S_DataBlocks[savedMenu.SelectedMenuPoint].DataTypes.ToArray();
+        PresentationDataType[] dataTypes = Storage.S_DataBlocks[savedMenu.SelectedMenuPoint].DataTypes.ToArray();
         if (dataTypes.Length == 0)
         {
             Printer.PrintWarning("Нет объектов для фильтирации");
@@ -136,7 +136,7 @@ public static class RouteManager
         Menu savedMenu = Menu.CreateChoiceMenu(savedData);
         savedMenu.HandleUsing();
         
-        DataType[] dataTypes = Storage.S_DataBlocks[savedMenu.SelectedMenuPoint].DataTypes.ToArray();
+        PresentationDataType[] dataTypes = Storage.S_DataBlocks[savedMenu.SelectedMenuPoint].DataTypes.ToArray();
         if (dataTypes.Length == 0)
         {
             Printer.PrintWarning("Нет объектов для сортировки");

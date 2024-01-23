@@ -27,10 +27,6 @@ public sealed class SettingsData : DataType
 
     public ViewingMode ViewingMode { get; set; } = ViewingMode.AskUser;
 
-    public override string[] GetFieldNames() => Array.Empty<string>();
-
-    public override string[] GetFieldValues() => Array.Empty<string>();
-
     public override string this[string fieldName]
     {
         get => "";
@@ -63,8 +59,6 @@ public sealed class SettingsData : DataType
             }
         }
     }
-
-    public override int CompareTo(DataType dataType, string fieldName) => -1;
 
     public override string ToString()
     {
