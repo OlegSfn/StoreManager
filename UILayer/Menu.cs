@@ -1,5 +1,8 @@
 namespace UILayer;
 
+/// <summary>
+/// Represents a menu with multiple menu points.
+/// </summary>
 public class Menu
 {
     private readonly MenuPoint[] _menuPoints;
@@ -7,12 +10,20 @@ public class Menu
     
     public int SelectedMenuPoint { get; set; }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="Menu"/> class.
+    /// </summary>
+    /// <param name="menuPoints">The array of menu points.</param>
+    /// <param name="header">The optional header text for the menu.</param>
     public Menu(MenuPoint[] menuPoints, string header="")
     {
         _menuPoints = menuPoints;
         _header = header;
     }
     
+    /// <summary>
+    /// Handles the user's interactions with the menu.
+    /// </summary>
     public void HandleUsing()
     {
         Show();
@@ -42,6 +53,11 @@ public class Menu
         }
     }
 
+    /// <summary>
+    /// Creates a menu with menu points based on the provided names.
+    /// </summary>
+    /// <param name="names">An array of menu point names.</param>
+    /// <returns>The created menu.</returns>
     public static Menu CreateChoiceMenu(string[] names)
     {
         MenuPoint[] menuPoints = new MenuPoint[names.Length];
@@ -52,6 +68,9 @@ public class Menu
         return createdMenu;
     }
     
+    /// <summary>
+    /// Displays the menu on the console.
+    /// </summary>
     private void Show()
     {
         Printer.FullClear();
@@ -67,6 +86,11 @@ public class Menu
         }
     }
 
+    /// <summary>
+    /// Handles pressing a menu point at the specified index.
+    /// </summary>
+    /// <param name="index">The index of the pressed menu point.</param>
+    /// <returns>True if the menu point was successfully pressed, false otherwise.</returns>
     private bool PressMenuPoint(int index)
     {
         if (0 > index || index >= _menuPoints.Length) return false;
@@ -76,12 +100,21 @@ public class Menu
         return true;
     }
     
+    /// <summary>
+    /// Presses the currently selected menu point.
+    /// </summary>
     private void PressSelectedMenuPoint()
         => PressMenuPoint(SelectedMenuPoint);
 
+    /// <summary>
+    /// Selects the next menu point.
+    /// </summary>
     private void SelectNextMenuPoint() 
         => SelectedMenuPoint = Math.Clamp(SelectedMenuPoint+1, 0, _menuPoints.Length-1);
 
+    /// <summary>
+    /// Selects the previous menu point.
+    /// </summary>
     private void SelectPreviousMenuPoint()
         => SelectedMenuPoint = Math.Clamp(SelectedMenuPoint-1, 0, _menuPoints.Length-1);
 }

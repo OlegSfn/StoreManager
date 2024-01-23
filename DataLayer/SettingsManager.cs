@@ -4,11 +4,18 @@ using UILayer;
 
 namespace DataLayer;
 
+/// <summary>
+/// Provides functionality for managing application settings.
+/// </summary>
 public static class SettingsManager
 {
     private static string s_settingsFileName = "settings.json";
     private static Menu s_settingsMenu;
     
+    /// <summary>
+    /// Saves the current application settings to a JSON file.
+    /// </summary>
+    /// <param name="silentSave">If true, no confirmation message will be printed.</param>
     public static void SaveSettings(bool silentSave)
     {
         try
@@ -29,6 +36,9 @@ public static class SettingsManager
         }
     }
     
+    /// <summary>
+    /// Loads application settings from a JSON file.
+    /// </summary>
     public static void LoadSettings()
     {
 
@@ -54,12 +64,19 @@ public static class SettingsManager
             Console.SetIn(Storage.S_StandardInput);
         }
     }
+    
+    /// <summary>
+    /// Loads default application settings and saves them to a JSON file.
+    /// </summary>
     public static void LoadDefaultSettings()
     {
         Storage.S_CurSettings = new SettingsData();
         SaveSettings(true);
     }
 
+    /// <summary>
+    /// Opens a menu for modifying application settings.
+    /// </summary>
     public static void OpenSettings()
     {
         int lastSelectedMenuPoint = 0;
@@ -82,30 +99,48 @@ public static class SettingsManager
         }
     }
 
+    /// <summary>
+    /// Changes the option for how to get data.
+    /// </summary>
     private static void ChangeDataGettingOption()
     {
         Printer.PrintWarning("1 - всегда сохранять в файл, 2 - всегда сохранять в консоль, 3 - всегда спрашивать");
         Storage.S_CurSettings.EnterDataChoice = (ConsoleFileOption)InputHandler.GetUserNumberInRange(1, 3);
     }
     
+    /// <summary>
+    /// Changes the option for where to show the result.
+    /// </summary>
     private static void ChangeWhereToShowResultOption()
     {
         Printer.PrintWarning("1 - всегда сохранять в файл, 2 - всегда сохранять в консоль, 3 - всегда спрашивать");
         Storage.S_CurSettings.ShowResultChoice = (ConsoleFileOption)InputHandler.GetUserNumberInRange(1, 3);
     }
     
+    /// <summary>
+    /// Changes the option for how to show the result.
+    /// </summary>
     private static void ChangeHowToShowResultOption()
     {
         Printer.PrintWarning("1 - в формате JSON, 2 - в формате таблицы, 3 - всегда спрашивать");
         Storage.S_CurSettings.ViewingMode = (ViewingMode)InputHandler.GetUserNumberInRange(1, 3);
     }
     
+    /// <summary>
+    /// Toggles the option for instant file opening after writing data.
+    /// </summary>
     private static void ChangeInstantOpeningOption()
         => Storage.S_CurSettings.NeedOpenFileAfterWriting = !Storage.S_CurSettings.NeedOpenFileAfterWriting;
     
+    /// <summary>
+    /// Changes the favorite input file path.
+    /// </summary>
     private static void ChangeFavouriteInputFile()
         => Storage.S_CurSettings.FavouriteInputFile = InputHandler.GetFilePathToJson("Введите путь до json файла: ");
     
+    /// <summary>
+    /// Changes the favorite output file path.
+    /// </summary>
     private static void ChangeFavouriteOutputFile()
         => Storage.S_CurSettings.FavouriteOutputFile = InputHandler.GetValidPath("Введите путь до файла, в который нужно сохранять результат: ");
 }

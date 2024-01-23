@@ -4,8 +4,15 @@ using UILayer;
 
 namespace DataLayer;
 
+/// <summary>
+/// Provides functionality for managing and processing data.
+/// </summary>
 public static class DataManager
 {
+    /// <summary>
+    /// Reads data from a JSON file and adds it to the storage as a new data block.
+    /// </summary>
+    /// <param name="filePath">The path of the JSON file to read data from. Default is "Консоль".</param>
     public static void EnterData(string filePath = "Консоль")
     {
         List<StoreData> storesData = JsonParser.ReadJson<StoreData>();
@@ -19,6 +26,13 @@ public static class DataManager
         Storage.S_DataBlocks.Add(dataBlock);
     }
 
+    /// <summary>
+    /// Filters data based on the specified field name and value.
+    /// </summary>
+    /// <param name="dataTypes">The array of PresentationDataType to filter.</param>
+    /// <param name="fieldName">The name of the field to filter by.</param>
+    /// <param name="value">The value to filter for in the specified field.</param>
+    /// <returns>A new data block containing the filtered data.</returns>
     public static DataBlock FilterData(PresentationDataType[] dataTypes, string fieldName, string value)
     {
         List<PresentationDataType> filteredData = new List<PresentationDataType>();
@@ -31,6 +45,13 @@ public static class DataManager
         return new DataBlock("Выборка", new List<string> {fieldName, value}, filteredData);
     }
 
+    /// <summary>
+    /// Sorts data based on the specified field name and sorting order.
+    /// </summary>
+    /// <param name="dataTypes">The array of PresentationDataType to sort.</param>
+    /// <param name="fieldName">The name of the field to sort by.</param>
+    /// <param name="isReversed">Indicates whether the sorting order is reversed.</param>
+    /// <returns>A new data block containing the sorted data.</returns>
     public static DataBlock SortData(PresentationDataType[] dataTypes, string fieldName, bool isReversed)
     {
         int mult = isReversed ? -1 : 1;

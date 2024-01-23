@@ -6,8 +6,15 @@ using UILayer;
 
 namespace StoreManager;
 
+/// <summary>
+/// Manages user routes in console application.
+/// </summary>
 public static class RouteManager
 {
+    /// <summary>
+    /// Creates the main menu for the store management application.
+    /// </summary>
+    /// <returns>The main menu.</returns>
     public static Menu CreateMainMenu()
     {
         List<MenuPoint> menuPoints = new List<MenuPoint>();
@@ -31,6 +38,9 @@ public static class RouteManager
         return mainMenu;
     }
 
+    /// <summary>
+    /// Handles the first usage of the application by prompting the user for configuration.
+    /// </summary>
     public static void HandleFirstUsing()
     {
         string question = "Вы ни разу не открывали это приложение, хотите настроить его?";
@@ -45,6 +55,9 @@ public static class RouteManager
         }
     }
     
+    /// <summary>
+    /// Allows the user to enter data into the application.
+    /// </summary>
     private static void EnterData()
     {
         void EnterDataViaConsole()
@@ -107,6 +120,9 @@ public static class RouteManager
         }
     }
     
+    /// <summary>
+    /// Filters data based on user input.
+    /// </summary>
     private static void FilterData()
     {
         string[] savedData = Storage.S_DataBlocks.Select(x => x.ToString()).ToArray();
@@ -130,6 +146,9 @@ public static class RouteManager
         Storage.AddDataBlock(dataBlock);
     }
     
+    /// <summary>
+    /// Sorts data based on user input.
+    /// </summary>
     private static void SortData()
     {
         string[] savedData = Storage.S_DataBlocks.Select(x => x.ToString()).ToArray();
@@ -155,6 +174,9 @@ public static class RouteManager
         Storage.AddDataBlock(sortedDataBlock);
     }
     
+    /// <summary>
+    /// Saves data based on user input.
+    /// </summary>
     private static void SaveData()
     {
         string[] saveDatas = Storage.S_DataBlocks.Select(x => x.ToString()).ToArray();
@@ -233,6 +255,10 @@ public static class RouteManager
         }
     }
     
+    /// <summary>
+    /// Opens a file in the default editor.
+    /// </summary>
+    /// <param name="filePath">The path of the file to open.</param>
     private static void OpenFileInEditor(string filePath)
     {
         try

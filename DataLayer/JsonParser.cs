@@ -4,6 +4,9 @@ using Entities;
 
 namespace DataLayer;
 
+/// <summary>
+/// Represents states during JSON parsing.
+/// </summary>
 public enum ParseState
 {
     None,
@@ -15,6 +18,9 @@ public enum ParseState
     ExpectingEnd
 }
 
+/// <summary>
+/// Represents types of values during JSON parsing.
+/// </summary>
 public enum ValueType
 {
     None,
@@ -24,21 +30,37 @@ public enum ValueType
     Null
 }
 
+/// <summary>
+/// Provides functionality for parsing and formatting JSON data.
+/// </summary>
 public static class JsonParser
 {
     public static readonly string SExitString = "--Return--"; 
     
+    /// <summary>
+    /// Writes the JSON representation of a <see cref="DataBlock"/> to the console.
+    /// </summary>
+    /// <param name="dataBlock">The DataBlock to write as JSON.</param>
     public static void WriteJson(DataBlock dataBlock)
     {
         foreach (string line in dataBlock.FormJson().Split(Environment.NewLine))
             Console.WriteLine(line);
     }
     
+    /// <summary>
+    /// Writes the string representation of a <see cref="DataType"/> to the console.
+    /// </summary>
+    /// <param name="dataType">The DataType to write as a string.</param>
     public static void WriteJson(DataType dataType)
     { 
         Console.WriteLine(dataType);
     }
 
+    /// <summary>
+    /// Reads JSON data and converts it to a list of specified data types.
+    /// </summary>
+    /// <typeparam name="T">The type of DataType to read from the JSON data.</typeparam>
+    /// <returns>A list of DataType objects read from the JSON data.</returns>
     public static List<T> ReadJson<T>() where T : DataType, new()
     {
         int lineNumber = 1, characterNumber = 1;
@@ -322,6 +344,11 @@ public static class JsonParser
         return dataTypes;
     }
     
+    /// <summary>
+    /// Reads JSON data using regular expressions and converts it to a list of specified data types.
+    /// </summary>
+    /// <typeparam name="T">The type of DataType to read from the JSON data.</typeparam>
+    /// <returns>A list of DataType objects read from the JSON data using regular expressions.</returns>
     public static List<DataType> ReadJsonRegex<T>() where T : DataType, new() 
     {
         List<DataType> dataTypes = new List<DataType>();
@@ -342,6 +369,10 @@ public static class JsonParser
         return dataTypes;
     }
     
+    /// <summary>
+    /// Reads input from the console until the exit string is encountered.
+    /// </summary>
+    /// <returns>The formatted input string.</returns>
     private static string FormInput()
     {
         string line;
@@ -355,6 +386,11 @@ public static class JsonParser
         return sb.ToString();
     }
 
+    /// <summary>
+    /// Formats input string for use with regular expressions.
+    /// </summary>
+    /// <param name="input">The input string to format.</param>
+    /// <returns>The formatted input string.</returns>
     private static string FormatInputForRegex(string input)
     {
         StringBuilder sb = new StringBuilder();

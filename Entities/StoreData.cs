@@ -1,6 +1,9 @@
 namespace Entities;
 using System.Collections;
 
+/// <summary>
+/// Represents data for a store and implements the <see cref="PresentationDataType"/> interface.
+/// </summary>
 public sealed class StoreData : PresentationDataType
 {
     private int? _id;
@@ -9,8 +12,9 @@ public sealed class StoreData : PresentationDataType
     private string[]? _employees;
     private string[]? _products;
 
-    private readonly string _noValStr = "Нет значения";
+    private readonly string _noValStr = "Нет значения"; // If a field is null, it will be replaced later with this string.
     
+    /// <inheritdoc/>
     public override string this[string fieldName]
     {
         get
@@ -49,6 +53,7 @@ public sealed class StoreData : PresentationDataType
         }
     }
 
+    /// <inheritdoc/>
     public override int CompareTo(DataType dataType, string fieldName)
     {
         StoreData storeData = (StoreData)dataType;
@@ -63,6 +68,10 @@ public sealed class StoreData : PresentationDataType
         };
     }
 
+    /// <summary>
+    /// Provide a string representation of the StoreData object.
+    /// </summary>
+    /// <returns>A string representation of the StoreData object in JSON format.</returns>
     public override string ToString()
     {
         string employeesString = _noValStr, productsString = _noValStr;
@@ -80,9 +89,11 @@ public sealed class StoreData : PresentationDataType
                $"}}";
     }
     
+    /// <inheritdoc/>
     public override string[] GetFieldNames()
         => new[] { "store_id", "store_name", "location", "employees", "products" };
 
+    /// <inheritdoc/>
     public override string[] GetFieldValues()
         => new[] { _id.ToString() ?? _noValStr, _name ?? _noValStr, _location ?? _noValStr, 
             _employees != null ? string.Join($", ", _employees) : _noValStr, 

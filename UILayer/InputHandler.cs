@@ -1,7 +1,16 @@
 namespace UILayer;
 
+/// <summary>
+/// Handles user input in a safe manner.
+/// </summary>
 public static class InputHandler
 {
+    /// <summary>
+    /// Reads a line from the console, handling null input.
+    /// </summary>
+    /// <param name="msg">The message to display before reading input.</param>
+    /// <param name="errorMsg">The error message to display if input is null.</param>
+    /// <returns>The user input.</returns>
     public static string SafeReadline(string msg, string errorMsg)
     {
         while (true)
@@ -15,6 +24,13 @@ public static class InputHandler
         }
     }
     
+    /// <summary>
+    /// Asks the user a yes/no question.
+    /// </summary>
+    /// <param name="question">The question to ask.</param>
+    /// <param name="yesKey">The key for 'yes' response.</param>
+    /// <param name="enterNewLine">Whether to print the question on a new line.</param>
+    /// <returns>True if the user answers 'yes', false otherwise.</returns>
     public static bool AskUserYesOrNo(string question, ConsoleKey yesKey, bool enterNewLine=true)
     {
         if (enterNewLine)
@@ -33,6 +49,12 @@ public static class InputHandler
         return false;
     }
     
+    /// <summary>
+    /// Gets a number from the user within a specified range.
+    /// </summary>
+    /// <param name="minNum">The minimum allowed number.</param>
+    /// <param name="maxNum">The maximum allowed number.</param>
+    /// <returns>The user-entered number within the specified range.</returns>
     public static int GetUserNumberInRange(int minNum, int maxNum)
     {
         while (true)
@@ -52,6 +74,10 @@ public static class InputHandler
         }
     }
     
+    /// <summary>
+    /// Waits for the user to press any key.
+    /// </summary>
+    /// <param name="msg">The message to display before waiting.</param>
     public static void WaitForUserInput(string msg)
     {
         Printer.PrintWarning(msg, false);
@@ -59,6 +85,11 @@ public static class InputHandler
         Console.WriteLine();
     }
     
+    /// <summary>
+    /// Gets a file path from the user, ensuring it ends with ".json".
+    /// </summary>
+    /// <param name="msg">The message to display before getting the file path.</param>
+    /// <returns>The valid file path entered by the user.</returns>
     public static string GetFilePathToJson(string msg)
     {
         while (true)
@@ -77,6 +108,11 @@ public static class InputHandler
         }
     }
     
+    /// <summary>
+    /// Gets a valid file path from the user, handling existing files and potential overwrite confirmation.
+    /// </summary>
+    /// <param name="msg">The message to display before getting the file path.</param>
+    /// <returns>The valid file path entered by the user.</returns>
     public static string GetValidPath(string msg)
     {
         while (true)
