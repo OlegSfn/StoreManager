@@ -12,6 +12,8 @@ public static class Storage
     public static TextReader S_StandardInput { get; set; }
     public static TextWriter S_StandardOutput { get; set; }
     
+    public static string S_ExitString { get; set; }
+    
     /// <summary>
     /// Adds a data block to the list of stored data blocks.
     /// </summary>

@@ -134,16 +134,22 @@ public static class SettingsManager
     /// </summary>
     private static void ChangeInstantOpeningOption()
         => Storage.S_CurSettings.NeedOpenFileAfterWriting = !Storage.S_CurSettings.NeedOpenFileAfterWriting;
-    
+
     /// <summary>
     /// Changes the favorite input file path.
     /// </summary>
     private static void ChangeFavouriteInputFile()
-        => Storage.S_CurSettings.FavouriteInputFile = InputHandler.GetFilePathToJson("Введите путь до json файла: ");
-    
+    {
+        string? filePath = InputHandler.GetFilePathToJson($"Введите путь до json файла или \"{Storage.S_ExitString}\", чтобы сбросить: ");
+        Storage.S_CurSettings.FavouriteInputFile = filePath ?? string.Empty;
+    }
+
     /// <summary>
     /// Changes the favorite output file path.
     /// </summary>
     private static void ChangeFavouriteOutputFile()
-        => Storage.S_CurSettings.FavouriteOutputFile = InputHandler.GetValidPath("Введите путь до файла, в который нужно сохранять результат: ");
+    {
+        string? filePath = InputHandler.GetValidPath($"Введите путь до файла, в который нужно сохранять результат или \"{Storage.S_ExitString}\", чтобы сбросить: ");
+        Storage.S_CurSettings.FavouriteOutputFile = filePath ?? string.Empty;
+    }
 }

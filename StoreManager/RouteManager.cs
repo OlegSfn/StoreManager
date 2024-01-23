@@ -12,6 +12,20 @@ namespace StoreManager;
 /// </summary>
 public static class RouteManager
 {
+    public static void HandleEnteringProgram()
+    {
+        Storage.S_StandardInput = Console.In;
+        Storage.S_StandardOutput = Console.Out;
+        SettingsManager.LoadSettings();
+        if (Storage.S_CurSettings.IsFirstUsing)
+            HandleFirstUsing();
+        
+        Storage.S_ExitString =  "Ctrl+Z";
+        if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux) || RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
+            Storage.S_ExitString = "Ctrl+D";
+    }
+    
+    
     /// <summary>
     /// Creates the main menu for the store management application.
     /// </summary>
@@ -42,7 +56,7 @@ public static class RouteManager
     /// <summary>
     /// Handles the first usage of the application by prompting the user for configuration.
     /// </summary>
-    public static void HandleFirstUsing()
+    private static void HandleFirstUsing()
     {
         string question = "Вы ни разу не открывали это приложение, хотите настроить его?";
         Storage.S_CurSettings!.IsFirstUsing = false;
@@ -63,11 +77,7 @@ public static class RouteManager
     {
         void EnterDataViaConsole()
         {
-            string exitString = "Ctrl+Z";
-            if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux) || RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
-                exitString = "Ctrl+D";
-            
-            Console.WriteLine($"Введите ваши данные (чтобы вернуться в программу в конце нажмите \"{exitString}\"):");
+            Console.WriteLine($"Введите ваши данные (чтобы вернуться в программу в конце нажмите \"{Storage.S_ExitString}\"):");
             try
             {
                 DataManager.EnterData();
@@ -84,8 +94,17 @@ public static class RouteManager
             try
             {
                 string filePath = Storage.S_CurSettings.FavouriteInputFile;
-                if (filePath == string.Empty)
-                    filePath = InputHandler.GetFilePathToJson("Введите путь до json файла, из которого надо считать данные: ");
+                if (!File.Exists(filePath))
+                {
+                    filePath = InputHandler.GetFilePathToJson($"Файла по любимому пути больше нет, пожалуйста, введите путь до json файла, из которого надо считать данные или \"{Storage.S_ExitString}\", чтобы выйти: ");
+                    Storage.S_CurSettings.FavouriteInputFile = string.Empty;
+                    SettingsManager.SaveSettings(true);
+                }
+                else if (filePath == string.Empty)
+                    filePath = InputHandler.GetFilePathToJson($"Введите путь до json файла, из которого надо считать данные или \"{Storage.S_ExitString}\", чтобы выйти: ");
+
+                if (filePath == null)
+                    return;
                 
                 using StreamReader sr = new StreamReader(filePath);
                 Console.SetIn(sr);
@@ -190,9 +209,18 @@ public static class RouteManager
         
         void ShowDataViaFile()
         {
-            string filePath = Storage.S_CurSettings.FavouriteOutputFile;
-            if (filePath == string.Empty)
-                filePath = InputHandler.GetValidPath("Введите путь, куда требуется сохранить данные: ");
+            string? filePath = Storage.S_CurSettings.FavouriteOutputFile;
+            if (!File.Exists(filePath))
+            {
+                filePath = InputHandler.GetValidPath($"Файла по любимому пути больше нет, пожалуйста, введите путь, куда требуется сохранить данные или \"{Storage.S_ExitString}\", чтобы выйти: ");
+                Storage.S_CurSettings.FavouriteOutputFile = string.Empty;
+                SettingsManager.SaveSettings(true);
+            }
+            else if (filePath == string.Empty)
+                filePath = InputHandler.GetValidPath($"Введите путь, куда требуется сохранить данные или \"{Storage.S_ExitString}\", чтобы выйти: ");
+            
+            if (filePath == null)
+                return;
             
             using StreamWriter sr = new StreamWriter(filePath);
             Console.SetOut(sr);

@@ -50,31 +50,6 @@ public static class InputHandler
     }
     
     /// <summary>
-    /// Gets a number from the user within a specified range.
-    /// </summary>
-    /// <param name="minNum">The minimum allowed number.</param>
-    /// <param name="maxNum">The maximum allowed number.</param>
-    /// <returns>The user-entered number within the specified range.</returns>
-    public static int GetUserNumberInRange(int minNum, int maxNum)
-    {
-        while (true)
-        {
-            string msg = $"Введите число в отрезке от {minNum} до {maxNum}: ";
-            if (int.TryParse(SafeReadline(msg, "Введена недопустимая строка."), out int res))
-            {
-                if ((minNum <= res) && (res <= maxNum))
-                    return res;
-
-                Printer.PrintError($"Введенное число не попадает в отрезок от {minNum} до {maxNum}");
-            }
-            else
-            {
-                Printer.PrintError("Вы ввели не целое число.");
-            }
-        }
-    }
-    
-    /// <summary>
     /// Waits for the user to press any key.
     /// </summary>
     /// <param name="msg">The message to display before waiting.</param>
@@ -85,16 +60,16 @@ public static class InputHandler
         Console.WriteLine();
     }
     
-    /// <summary>
-    /// Gets a file path from the user, ensuring it ends with ".json".
-    /// </summary>
-    /// <param name="msg">The message to display before getting the file path.</param>
-    /// <returns>The valid file path entered by the user.</returns>
-    public static string GetFilePathToJson(string msg)
+
+    public static string? GetFilePathToJson(string msg)
     {
         while (true)
         {
-            string filePath = SafeReadline(msg, "Введена недопустимая строка.");
+            Console.Write(msg);
+            string? filePath = Console.ReadLine();
+            if (filePath == null)
+                return null;
+            
             filePath = filePath.EndsWith(".json") ? filePath : filePath + ".json";
             if (filePath.All(x => !Path.GetInvalidPathChars().Contains(x)))
             {
@@ -113,11 +88,15 @@ public static class InputHandler
     /// </summary>
     /// <param name="msg">The message to display before getting the file path.</param>
     /// <returns>The valid file path entered by the user.</returns>
-    public static string GetValidPath(string msg)
+    public static string? GetValidPath(string msg)
     {
         while (true)
         {
-            string filePath = SafeReadline(msg, "Введена недопустимая строка.");
+            Console.Write(msg);
+            string? filePath = Console.ReadLine();
+            if (filePath == null)
+                return null;
+            
             filePath = filePath.EndsWith(".json") ? filePath : filePath + ".json";
             if (filePath.All(x => !Path.GetInvalidPathChars().Contains(x)))
             {
