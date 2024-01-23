@@ -20,8 +20,14 @@ public static class Printer
     /// Displays a table of data in the console.
     /// </summary>
     /// <param name="result">The array of PresentationDataType to display as a table.</param>
-    public static void ShowTable(PresentationDataType[]? result)
+    public static void ShowTable(PresentationDataType[] result)
     {
+        if (result.Length == 0)
+        {
+            InputHandler.WaitForUserInput("Выборка оказалась пустой. Нажмите любую кнопку, чтобы вернуться в меню: ");
+            return;
+        }
+        
         s_startIndex = 0;
         s_lastConsoleWidth = Console.WindowWidth;
         s_dataTypes = result;

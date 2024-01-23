@@ -35,8 +35,6 @@ public enum ValueType
 /// </summary>
 public static class JsonParser
 {
-    public static readonly string SExitString = "--Return--"; 
-    
     /// <summary>
     /// Writes the JSON representation of a <see cref="DataBlock"/> to the console.
     /// </summary>
@@ -63,6 +61,7 @@ public static class JsonParser
     /// <returns>A list of DataType objects read from the JSON data.</returns>
     public static List<T> ReadJson<T>() where T : DataType, new()
     {
+        #region variables
         int lineNumber = 1, characterNumber = 1;
         string input = FormInput();
         Stack<ParseState> parseStates = new Stack<ParseState>();
@@ -72,8 +71,10 @@ public static class JsonParser
         string curKey = "", curVal = "";
         bool hasDotInside = false;
         ValueType curValueType = ValueType.None;
-        char[] tfnAlph = { 't', 'r', 'u', 'e', 'f', 'a', 'l', 's', 'n', 'u' };
-        
+        HashSet<char> tfnAlph = new HashSet<char>{ 't', 'r', 'u', 'e', 'f', 'a', 'l', 's', 'n', 'u' };
+        #endregion
+
+        #region local functions
         void ThrowExceptionWithComments(string exceptionMessage, char character)
         {
             throw new Exception($"{exceptionMessage}, got {character} in line {lineNumber} on character {characterNumber}");
@@ -121,6 +122,8 @@ public static class JsonParser
             else
                 ResetValues();
         }
+        #endregion
+        
 
         foreach (var c in input)
         {
@@ -146,21 +149,40 @@ public static class JsonParser
                     }
                     break;
                 case ParseState.InArray when parseStates.Peek() == ParseState.ExpectingValue:
-                    if (c == '"')
-                    {
-                        parseStates.Push(curState);
-                        curState = ParseState.ReadingValue;
-                        curValueType = ValueType.String;
-                    }
-                    else if (char.IsDigit(c))
+                    if (char.IsDigit(c))
                     {
                         curVal += c;
                         parseStates.Push(curState);
                         curState = ParseState.ReadingValue;
                         curValueType = ValueType.Value;
+                    } 
+                    else switch (c)
+                    {
+                        case '"':
+                            parseStates.Push(curState);
+                            curValueType = ValueType.String;
+                            curState = ParseState.ReadingValue;
+                            break;
+                        case 't':
+                        case 'f':
+                            parseStates.Push(curState);
+                            curValueType = ValueType.Bool;
+                            curState = ParseState.ReadingValue;
+                            curVal += c;
+                            break;
+                        case 'n':
+                            parseStates.Push(curState);
+                            curValueType = ValueType.Null;
+                            curState = ParseState.ReadingValue;
+                            curVal += c;
+                            break;
+                        default:
+                        {
+                            if (!char.IsWhiteSpace(c))
+                                ThrowExceptionWithComments("Expected an array item or end of the array", c);
+                            break;
+                        }
                     }
-                    else if (!char.IsWhiteSpace(c))
-                        ThrowExceptionWithComments("Expected an array item or end of the array", c);
                     break;
                 case ParseState.InArray when parseStates.Peek() == ParseState.None:
                     if (c == '{')
@@ -200,28 +222,28 @@ public static class JsonParser
                 case ParseState.ExpectingValue:
                     if (char.IsDigit(c))
                     {
-                        curValueType = ValueType.Value;
                         parseStates.Push(curState);
+                        curValueType = ValueType.Value;
                         curState = ParseState.ReadingValue;
                         curVal += c;
                     }
                     else switch (c)
                     {
                         case '"':
-                            curValueType = ValueType.String;
                             parseStates.Push(curState);
+                            curValueType = ValueType.String;
                             curState = ParseState.ReadingValue;
                             break;
                         case 't':
                         case 'f':
-                            curValueType = ValueType.Bool;
                             parseStates.Push(curState);
+                            curValueType = ValueType.Bool;
                             curState = ParseState.ReadingValue;
                             curVal += c;
                             break;
                         case 'n':
-                            curValueType = ValueType.Null;
                             parseStates.Push(curState);
+                            curValueType = ValueType.Null;
                             curState = ParseState.ReadingValue;
                             curVal += c;
                             break;
@@ -329,6 +351,8 @@ public static class JsonParser
                     else if (!char.IsWhiteSpace(c))
                         ThrowExceptionWithComments($"Expected comma", c);
                     break;
+                default:
+                    throw new ArgumentOutOfRangeException();
             }
 
             // Not Environment.NewLine because we are reading only 1 char per iteration. (win - \r\n, mac - \n, both have \n).
@@ -349,6 +373,7 @@ public static class JsonParser
     /// </summary>
     /// <typeparam name="T">The type of DataType to read from the JSON data.</typeparam>
     /// <returns>A list of DataType objects read from the JSON data using regular expressions.</returns>
+    /// <remarks>Alternative version of ReadJson made on regex.</remarks>
     public static List<DataType> ReadJsonRegex<T>() where T : DataType, new() 
     {
         List<DataType> dataTypes = new List<DataType>();
@@ -377,7 +402,7 @@ public static class JsonParser
     {
         string line;
         StringBuilder sb = new StringBuilder();
-        while ((line = Console.ReadLine()) != SExitString && line != null)
+        while ((line = Console.ReadLine()) !=  null)
         {
             sb.Append(line);
             sb.Append(Environment.NewLine);
@@ -391,6 +416,7 @@ public static class JsonParser
     /// </summary>
     /// <param name="input">The input string to format.</param>
     /// <returns>The formatted input string.</returns>
+    /// <remarks>Need for working alternative solution with regex parser.</remarks>
     private static string FormatInputForRegex(string input)
     {
         StringBuilder sb = new StringBuilder();

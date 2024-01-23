@@ -80,7 +80,11 @@ public class Menu
         for (int i = 0; i < _menuPoints.Length; i++)
         {
             if (i == SelectedMenuPoint)
-                Console.WriteLine($"{i+1}. {_menuPoints[i].Text}\t<----");
+            {
+                Console.BackgroundColor = ConsoleColor.DarkGray;
+                Console.WriteLine($"{i+1}. {_menuPoints[i].Text}");
+                Console.ResetColor();
+            }
             else
                 Console.WriteLine($"{i+1}. {_menuPoints[i].Text}");
         }

@@ -32,6 +32,9 @@ public sealed class StoreData : PresentationDataType
         
         set
         {
+            if (value == "null" || value == $"null{S_SecretSep}")
+                return;
+            
             switch (fieldName)
             {
                 case "store_id":
@@ -74,18 +77,20 @@ public sealed class StoreData : PresentationDataType
     /// <returns>A string representation of the StoreData object in JSON format.</returns>
     public override string ToString()
     {
-        string employeesString = _noValStr, productsString = _noValStr;
+        string employeesString = "null", productsString = "null";
         if (_employees != null)
-            employeesString = string.Join($",{Environment.NewLine}\t\t", _employees.Select(x => $"\"{x}\""));
+            //employeesString = string.Join($",{Environment.NewLine}\t\t", _employees.Select(x => $"\"{x}\""));
+            employeesString = $"[{Environment.NewLine}\t\t{string.Join($",{Environment.NewLine}\t\t", _employees.Select(x => $"\"{x}\""))}{Environment.NewLine}\t]";
         if (_products != null)
-            productsString = string.Join($",{Environment.NewLine}\t\t", _products.Select(x => $"\"{x}\""));
+            //productsString = string.Join($",{Environment.NewLine}\t\t", _products.Select(x => $"\"{x}\""));
+            productsString = $"[{Environment.NewLine}\t\t{string.Join($",{Environment.NewLine}\t\t", _products.Select(x => $"\"{x}\""))}{Environment.NewLine}\t]";
         
         return $"{{{Environment.NewLine}" +
-               $"\t\"store_id\": {_id.ToString() ?? _noValStr},{Environment.NewLine}" +
-               $"\t\"store_name\": \"{_name ?? _noValStr}\",{Environment.NewLine}" +
-               $"\t\"location\": \"{_location ?? _noValStr}\",{Environment.NewLine}" +
-               $"\t\"employees\": [\n \t\t{employeesString} {Environment.NewLine}\t],{Environment.NewLine}" +
-               $"\t\"products\": [\n \t\t{productsString} {Environment.NewLine}\t]{Environment.NewLine}" +
+               $"\t\"store_id\": {_id?.ToString() ?? "null"},{Environment.NewLine}" +
+               $"\t\"store_name\": {(_name != null ? $"\"{_name}\"" : "null")},{Environment.NewLine}" +
+               $"\t\"location\": {(_location != null ? $"\"{_location}\"" : "null")},{Environment.NewLine}" +
+               $"\t\"employees\": {employeesString},{Environment.NewLine}" +
+               $"\t\"products\": {productsString}{Environment.NewLine}" +
                $"}}";
     }
     
@@ -95,7 +100,7 @@ public sealed class StoreData : PresentationDataType
 
     /// <inheritdoc/>
     public override string[] GetFieldValues()
-        => new[] { _id.ToString() ?? _noValStr, _name ?? _noValStr, _location ?? _noValStr, 
-            _employees != null ? string.Join($", ", _employees) : _noValStr, 
-            _products != null ? string.Join($", ", _products) : _noValStr };
+        => new[] { _id?.ToString() ?? _noValStr, _name ?? _noValStr, _location ?? _noValStr, 
+            _employees != null ? string.Join(", ", _employees) : _noValStr, 
+            _products != null ? string.Join(", ", _products) : _noValStr };
 }

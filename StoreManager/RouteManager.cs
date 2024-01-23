@@ -1,4 +1,5 @@
 using System.Diagnostics;
+using System.Runtime.InteropServices;
 using DatabaseLayer;
 using DataLayer;
 using Entities;
@@ -62,7 +63,11 @@ public static class RouteManager
     {
         void EnterDataViaConsole()
         {
-            Console.WriteLine($"Введите ваши данные (чтобы вернуться в программу в конце напишите \"{JsonParser.SExitString}\"):");
+            string exitString = "Ctrl+Z";
+            if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux) || RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
+                exitString = "Ctrl+D";
+            
+            Console.WriteLine($"Введите ваши данные (чтобы вернуться в программу в конце нажмите \"{exitString}\"):");
             try
             {
                 DataManager.EnterData();
@@ -223,6 +228,7 @@ public static class RouteManager
             }
             else if (Storage.S_CurSettings.ViewingMode == ViewingMode.Json)
             {
+                Printer.FullClear();
                 JsonParser.WriteJson(Storage.S_DataBlocks[saveMenu.SelectedMenuPoint]);
                 InputHandler.WaitForUserInput("Нажмите любую кнопку, чтобы продолжить: ");
             }

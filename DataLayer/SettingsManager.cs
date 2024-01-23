@@ -104,8 +104,9 @@ public static class SettingsManager
     /// </summary>
     private static void ChangeDataGettingOption()
     {
-        Printer.PrintWarning("1 - всегда сохранять в файл, 2 - всегда сохранять в консоль, 3 - всегда спрашивать");
-        Storage.S_CurSettings.EnterDataChoice = (ConsoleFileOption)InputHandler.GetUserNumberInRange(1, 3);
+        int length = Enum.GetValues(typeof(ConsoleFileOption)).Cast<int>().Max();
+        int curValue = (int)Storage.S_CurSettings.EnterDataChoice;
+        Storage.S_CurSettings.EnterDataChoice = (ConsoleFileOption)(curValue%length+1);
     }
     
     /// <summary>
@@ -113,8 +114,9 @@ public static class SettingsManager
     /// </summary>
     private static void ChangeWhereToShowResultOption()
     {
-        Printer.PrintWarning("1 - всегда сохранять в файл, 2 - всегда сохранять в консоль, 3 - всегда спрашивать");
-        Storage.S_CurSettings.ShowResultChoice = (ConsoleFileOption)InputHandler.GetUserNumberInRange(1, 3);
+        int length = Enum.GetValues(typeof(ConsoleFileOption)).Cast<int>().Max();
+        int curValue = (int)Storage.S_CurSettings.ShowResultChoice;
+        Storage.S_CurSettings.ShowResultChoice = (ConsoleFileOption)(curValue%length+1);
     }
     
     /// <summary>
@@ -122,8 +124,9 @@ public static class SettingsManager
     /// </summary>
     private static void ChangeHowToShowResultOption()
     {
-        Printer.PrintWarning("1 - в формате JSON, 2 - в формате таблицы, 3 - всегда спрашивать");
-        Storage.S_CurSettings.ViewingMode = (ViewingMode)InputHandler.GetUserNumberInRange(1, 3);
+        int length = Enum.GetValues(typeof(ViewingMode)).Cast<int>().Max();
+        int curValue = (int)Storage.S_CurSettings.ViewingMode;
+        Storage.S_CurSettings.ViewingMode = (ViewingMode)(curValue%length+1);
     }
     
     /// <summary>

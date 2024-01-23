@@ -26,7 +26,7 @@ public enum ViewingMode
 public sealed class SettingsData : DataType
 {
     public bool IsFirstUsing { get; set; } = true;
-    public bool NeedOpenFileAfterWriting { get; set; } = true;
+    public bool NeedOpenFileAfterWriting { get; set; } = false;
     
     public string FavouriteInputFile { get; set; } = string.Empty; // done
     public string FavouriteOutputFile { get; set; } = string.Empty; // done

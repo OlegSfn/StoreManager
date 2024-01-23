@@ -28,7 +28,8 @@ internal static class Program
         
         while (true)
         {
-            try
+            RouteManager.CreateMainMenu().HandleUsing();
+            /*try
             {
                 RouteManager.CreateMainMenu().HandleUsing();
             }
@@ -36,7 +37,7 @@ internal static class Program
             {
                 Console.WriteLine(ex.Message);
                 InputHandler.WaitForUserInput("Нажмите любую кнопку, чтобы продолжить: ");
-            }
+            }*/
         }
     }
 }

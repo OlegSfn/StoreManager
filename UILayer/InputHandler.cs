@@ -69,7 +69,7 @@ public static class InputHandler
             }
             else
             {
-                Printer.PrintError("Вы ввели не число.");
+                Printer.PrintError("Вы ввели не целое число.");
             }
         }
     }
