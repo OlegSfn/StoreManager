@@ -42,7 +42,7 @@ public static class DataManager
                 filteredData.Add((PresentationDataType)dataType.Clone());
         }
         
-        return new DataBlock("Выборка", new List<string> {fieldName, value}, filteredData);
+        return new DataBlock("Выборка", new List<string> {fieldName, $"по \"{value}\""}, filteredData);
     }
 
     /// <summary>
@@ -57,6 +57,6 @@ public static class DataManager
         int mult = isReversed ? -1 : 1;
         Array.Sort(dataTypes,0,dataTypes.Length, Comparer<PresentationDataType>.Create((data1, data2) => 
             data1.CompareTo(data2, fieldName) * mult));
-        return new DataBlock("Сортировка", new List<string> {fieldName, isReversed.ToString()}, dataTypes.ToList());
+        return new DataBlock("Сортировка", new List<string> {fieldName, isReversed ? "в порядке убывания" : "в порядке возрастания"}, dataTypes.ToList());
     }
 }

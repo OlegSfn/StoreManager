@@ -52,7 +52,7 @@ public static class SettingsManager
         {
             using StreamReader sr = new StreamReader(s_settingsFileName);
             Console.SetIn(sr);
-            Storage.S_CurSettings = (SettingsData)JsonParser.ReadJson<SettingsData>()[0];
+            Storage.S_CurSettings = JsonParser.ReadJson<SettingsData>()[0];
         }
         catch (Exception ex)
         {
@@ -134,9 +134,9 @@ public static class SettingsManager
     /// </summary>
     private static void ChangeInstantOpeningOption()
         => Storage.S_CurSettings.NeedOpenFileAfterWriting = !Storage.S_CurSettings.NeedOpenFileAfterWriting;
-
+    
     /// <summary>
-    /// Changes the favorite input file path.
+    /// Changes the favorite input file path in the current settings based on user input.
     /// </summary>
     private static void ChangeFavouriteInputFile()
     {
@@ -145,7 +145,7 @@ public static class SettingsManager
     }
 
     /// <summary>
-    /// Changes the favorite output file path.
+    /// Changes the favorite output file path in the current settings based on user input.
     /// </summary>
     private static void ChangeFavouriteOutputFile()
     {

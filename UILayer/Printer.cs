@@ -35,7 +35,6 @@ public static class Printer
         Thread widthChangerThread = new Thread(CheckWidth);
         widthChangerThread.Start();
 
-        int deletedColumns = 0;
         while (true)
         {
             s_maxLen = GetMaxLenOfColByConsoleWidth(s_maxColumnsOnScreen);
@@ -46,46 +45,49 @@ public static class Printer
             }
             
             ConsoleKey userInp = Console.ReadKey(true).Key;
-            if (userInp == ConsoleKey.LeftArrow)
+            switch (userInp)
             {
-                if (s_startIndex == 0)
+                case ConsoleKey.LeftArrow when s_startIndex == 0:
+                    Console.Beep();
                     continue;
-                s_startIndex--;
-            }
-            else if (userInp == ConsoleKey.RightArrow)
-            {
-                if (s_startIndex + s_maxColumnsOnScreen >= result[0].GetFieldNames().Length - deletedColumns || 
-                    GetMaxLenOfColByConsoleWidth(s_maxColumnsOnScreen+1) < 3)
+                case ConsoleKey.LeftArrow:
+                    s_startIndex--;
+                    break;
+                case ConsoleKey.RightArrow when s_startIndex + s_maxColumnsOnScreen >= result[0].GetFieldNames().Length ||
+                                                GetMaxLenOfColByConsoleWidth(s_maxColumnsOnScreen + 1) < 3:
+                    Console.Beep();
                     continue;
-                s_startIndex++;
-            }
-            else if (userInp == ConsoleKey.UpArrow)
-            {
-                if (s_maxColumnsOnScreen == result[0].GetFieldNames().Length - deletedColumns || 
-                    GetMaxLenOfColByConsoleWidth(s_maxColumnsOnScreen+1) < 3)
+                case ConsoleKey.RightArrow:
+                    s_startIndex++;
+                    break;
+                case ConsoleKey.UpArrow when s_maxColumnsOnScreen == result[0].GetFieldNames().Length ||
+                                             GetMaxLenOfColByConsoleWidth(s_maxColumnsOnScreen + 1) < 3:
+                    Console.Beep();
                     continue;
-
-                s_maxColumnsOnScreen++;
-                if (s_startIndex + s_maxColumnsOnScreen > result[0].GetFieldNames().Length - deletedColumns)
+                case ConsoleKey.UpArrow:
                 {
-                    if (s_startIndex == 0)
-                        s_maxColumnsOnScreen--;
-                    else
-                        s_startIndex--;
+                    s_maxColumnsOnScreen++;
+                    if (s_startIndex + s_maxColumnsOnScreen > result[0].GetFieldNames().Length)
+                    {
+                        if (s_startIndex == 0)
+                            s_maxColumnsOnScreen--;
+                        else
+                            s_startIndex--;
+                    }
+
+                    break;
                 }
-            }
-            else if (userInp == ConsoleKey.DownArrow)
-            {
-                if (s_maxColumnsOnScreen == 1)
+                case ConsoleKey.DownArrow when s_maxColumnsOnScreen == 1:
+                    Console.Beep();
                     continue;
-                s_maxColumnsOnScreen--;
-            }
-            else if (userInp == ConsoleKey.Enter)
-            {
-                s_threadAlive = false;
-                widthChangerThread.Join();
-                Console.WriteLine();
-                return;
+                case ConsoleKey.DownArrow:
+                    s_maxColumnsOnScreen--;
+                    break;
+                case ConsoleKey.Enter:
+                    s_threadAlive = false;
+                    widthChangerThread.Join();
+                    Console.WriteLine();
+                    return;
             }
         }
     }

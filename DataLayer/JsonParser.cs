@@ -77,7 +77,7 @@ public static class JsonParser
         #region local functions
         void ThrowExceptionWithComments(string exceptionMessage, char character)
         {
-            throw new Exception($"{exceptionMessage}, got {character} in line {lineNumber} on character {characterNumber}");
+            throw new Exception($"{exceptionMessage}, got \"{character}\" in line {lineNumber} on character {characterNumber}");
         }
 
         void ResetValues()
@@ -96,29 +96,46 @@ public static class JsonParser
             return parseStates.Pop();
         }
 
-        void HandleComma(char c)
+        void HandleEnd(char c)
         {
-            if (c == ',')
+            switch (c)
             {
-                if (parseStates.Peek() == ParseState.InArray)
-                {
+                case ',' when parseStates.Peek() == ParseState.InArray:
                     curState = parseStates.Pop();
                     return;
-                }
-
-                curState = PopFor(3);
-            }
-            else
-            {
-                parseStates.Push(curState);
-                curState = ParseState.ExpectingEnd;
+                case ',':
+                    curState = PopFor(3);
+                    break;
+                case '}':
+                    curState = PopFor(4);
+                    dataTypes.Add(curStore);
+                    curStore = new T();
+                    break;
+                case ']':
+                    if (parseStates.Count == 2 && parseStates.Peek() == ParseState.InArray)
+                    {
+                        parseStates.Pop();
+                        curState = ParseState.None;
+                        break;
+                    }
+                        
+                    ResetValues();
+                    PopFor(3);
+                    if (curState != ParseState.ExpectingEnd)
+                        curState = ParseState.ExpectingEnd;
+                    
+                    break;
+                default:
+                    parseStates.Push(curState);
+                    curState = ParseState.ExpectingEnd;
+                    break;
             }
         }
 
         void PushValue()
         {
             if (parseStates.Peek() == ParseState.InArray)
-                curVal += DataType.S_SecretSep;
+                curVal += DataType.SecretSep;
             else
                 ResetValues();
         }
@@ -185,30 +202,42 @@ public static class JsonParser
                     }
                     break;
                 case ParseState.InArray when parseStates.Peek() == ParseState.None:
-                    if (c == '{')
+                    switch (c)
                     {
-                        parseStates.Push(curState);
-                        curState = ParseState.InObject;
+                        case '{':
+                            parseStates.Push(curState);
+                            curState = ParseState.InObject;
+                            break;
+                        case ']':
+                            curState = parseStates.Pop();
+                            break;
+                        default:
+                        {
+                            if (!char.IsWhiteSpace(c))
+                                ThrowExceptionWithComments($"Expected new object", c);
+                            break;
+                        }
                     }
-                    else if (c == ']')
-                        curState = parseStates.Pop();
-                    else if (!char.IsWhiteSpace(c))
-                        ThrowExceptionWithComments($"Expected new object", c);
                     break;
                 case ParseState.InObject:
-                    if (c == '"')
+                    switch (c)
                     {
-                        parseStates.Push(curState);
-                        curState = ParseState.ReadingKey;
+                        case '"':
+                            parseStates.Push(curState);
+                            curState = ParseState.ReadingKey;
+                            break;
+                        case '}':
+                            curState = parseStates.Pop();
+                            dataTypes.Add(curStore);
+                            curStore = new T();
+                            break;
+                        default:
+                        {
+                            if (!char.IsWhiteSpace(c))
+                                ThrowExceptionWithComments($"Expected new field or end of object", c);
+                            break;
+                        }
                     }
-                    else if (c == '}')
-                    {
-                        curState = parseStates.Pop();
-                        dataTypes.Add(curStore);
-                        curStore = new T();
-                    }
-                    else if (!char.IsWhiteSpace(c))
-                        ThrowExceptionWithComments($"Expected new field or end of object", c);
                     break;
                 case ParseState.ReadingKey:
                     if (c == '"')
@@ -278,8 +307,10 @@ public static class JsonParser
                             hasDotInside = true;
                             break;
                         }
+                        if (char.IsLetter(c))
+                            ThrowExceptionWithComments("Expected value", c);
                         PushValue();
-                        HandleComma(c);
+                        HandleEnd(c);
                     }
                     else if (curValueType == ValueType.Bool && !tfnAlph.Contains(c))
                     {
@@ -289,7 +320,7 @@ public static class JsonParser
                             throw new Exception($"Expected false in line {lineNumber} on character {characterNumber}, got {curVal + c}");
                         
                         PushValue();
-                        HandleComma(c);
+                        HandleEnd(c);
                     }
                     else if (curValueType == ValueType.Null && !tfnAlph.Contains(c))
                     {
@@ -297,7 +328,7 @@ public static class JsonParser
                             throw new Exception($"Expected null in line {lineNumber} on character {characterNumber}, got {curVal + c}");
                         
                         PushValue();
-                        HandleComma(c);
+                        HandleEnd(c);
                     }
                     else
                     {
@@ -379,14 +410,14 @@ public static class JsonParser
         List<DataType> dataTypes = new List<DataType>();
         T curStore = new T();
         string input = FormatInputForRegex(FormInput());
-        string storePattern = @"\{""store_id"":(\d+),""store_name"":""(.*?)"",""location"":""(.*?)"",""employees"":\[(.+?)\],""products"":\[(.+?)\]}";
+        const string storePattern = @"\{""store_id"":(\d+),""store_name"":""(.*?)"",""location"":""(.*?)"",""employees"":\[(.+?)\],""products"":\[(.+?)\]}";
         foreach (Match store in Regex.Matches(input, storePattern))
         {
             curStore["store_id"] = store.Groups[1].Value;
             curStore["store_name"] = store.Groups[2].Value;
             curStore["location"] = store.Groups[3].Value;
-            curStore["employees"] = string.Join(DataType.S_SecretSep, store.Groups[4].Value.Split(',').Select(x => x.Trim('"')));
-            curStore["products"] = string.Join(DataType.S_SecretSep, store.Groups[5].Value.Split(',').Select(x => x.Trim('"')));
+            curStore["employees"] = string.Join(DataType.SecretSep, store.Groups[4].Value.Split(',').Select(x => x.Trim('"')));
+            curStore["products"] = string.Join(DataType.SecretSep, store.Groups[5].Value.Split(',').Select(x => x.Trim('"')));
             dataTypes.Add(curStore);
             curStore = new T();
         }

@@ -12,8 +12,8 @@ public sealed class StoreData : PresentationDataType
     private string[]? _employees;
     private string[]? _products;
 
-    private readonly string _noValStr = "Нет значения"; // If a field is null, it will be replaced later with this string.
-    
+    private const string _noValStr = "Нет значения"; // If a field is null, it will be replaced later with this string.
+
     /// <inheritdoc/>
     public override string this[string fieldName]
     {
@@ -32,7 +32,7 @@ public sealed class StoreData : PresentationDataType
         
         set
         {
-            if (value == "null" || value == $"null{S_SecretSep}")
+            if (value == "null" || value == $"null{SecretSep}")
                 return;
             
             switch (fieldName)
@@ -47,10 +47,10 @@ public sealed class StoreData : PresentationDataType
                     _location = value;
                     break;
                 case "employees":
-                    _employees = value.Split(S_SecretSep, StringSplitOptions.RemoveEmptyEntries);
+                    _employees = value.Split(SecretSep, StringSplitOptions.RemoveEmptyEntries);
                     break;
                 case "products":
-                    _products = value.Split(S_SecretSep, StringSplitOptions.RemoveEmptyEntries);
+                    _products = value.Split(SecretSep, StringSplitOptions.RemoveEmptyEntries);
                     break;
             }
         }
@@ -79,10 +79,8 @@ public sealed class StoreData : PresentationDataType
     {
         string employeesString = "null", productsString = "null";
         if (_employees != null)
-            //employeesString = string.Join($",{Environment.NewLine}\t\t", _employees.Select(x => $"\"{x}\""));
             employeesString = $"[{Environment.NewLine}\t\t{string.Join($",{Environment.NewLine}\t\t", _employees.Select(x => $"\"{x}\""))}{Environment.NewLine}\t]";
         if (_products != null)
-            //productsString = string.Join($",{Environment.NewLine}\t\t", _products.Select(x => $"\"{x}\""));
             productsString = $"[{Environment.NewLine}\t\t{string.Join($",{Environment.NewLine}\t\t", _products.Select(x => $"\"{x}\""))}{Environment.NewLine}\t]";
         
         return $"{{{Environment.NewLine}" +

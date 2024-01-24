@@ -12,6 +12,9 @@ namespace StoreManager;
 /// </summary>
 public static class RouteManager
 {
+    /// <summary>
+    /// Handles the setup and initialization of the program upon entering.
+    /// </summary>
     public static void HandleEnteringProgram()
     {
         Storage.S_StandardInput = Console.In;
@@ -25,7 +28,6 @@ public static class RouteManager
             Storage.S_ExitString = "Ctrl+D";
     }
     
-    
     /// <summary>
     /// Creates the main menu for the store management application.
     /// </summary>
@@ -38,6 +40,7 @@ public static class RouteManager
         MenuPoint sortData = new MenuPoint("Отсортировать данные.", SortData);
         MenuPoint saveData = new MenuPoint("Сохранить (вывести) данные.", SaveData);
         MenuPoint settings = new MenuPoint("Настройки.", SettingsManager.OpenSettings);
+        MenuPoint help = new MenuPoint("Помощь.", OpenHelp);
         MenuPoint exit = new MenuPoint("Выйти.", () => Environment.Exit(0));
         
         menuPoints.Add(enterData);
@@ -48,6 +51,7 @@ public static class RouteManager
             menuPoints.Add(saveData);
         }
         menuPoints.Add(settings);
+        menuPoints.Add(help);
         menuPoints.Add(exit);
         Menu mainMenu = new Menu(menuPoints.ToArray());
         return mainMenu;
@@ -58,7 +62,7 @@ public static class RouteManager
     /// </summary>
     private static void HandleFirstUsing()
     {
-        string question = "Вы ни разу не открывали это приложение, хотите настроить его?";
+        const string question = "Вы ни разу не открывали это приложение, хотите настроить его?";
         Storage.S_CurSettings!.IsFirstUsing = false;
         SettingsManager.SaveSettings(true);
         if (InputHandler.AskUserYesOrNo(question, ConsoleKey.Enter))
@@ -68,6 +72,8 @@ public static class RouteManager
             SettingsManager.LoadDefaultSettings();
             Printer.FullClear();
         }
+        
+        OpenHelp();
     }
     
     /// <summary>
@@ -94,15 +100,15 @@ public static class RouteManager
             try
             {
                 string filePath = Storage.S_CurSettings.FavouriteInputFile;
-                if (!File.Exists(filePath))
+                if (filePath == string.Empty)
+                    filePath = InputHandler.GetFilePathToJson($"Введите путь до json файла, из которого надо считать данные или \"{Storage.S_ExitString}\", чтобы выйти: ");
+                else if (!File.Exists(filePath))
                 {
                     filePath = InputHandler.GetFilePathToJson($"Файла по любимому пути больше нет, пожалуйста, введите путь до json файла, из которого надо считать данные или \"{Storage.S_ExitString}\", чтобы выйти: ");
                     Storage.S_CurSettings.FavouriteInputFile = string.Empty;
                     SettingsManager.SaveSettings(true);
                 }
-                else if (filePath == string.Empty)
-                    filePath = InputHandler.GetFilePathToJson($"Введите путь до json файла, из которого надо считать данные или \"{Storage.S_ExitString}\", чтобы выйти: ");
-
+                
                 if (filePath == null)
                     return;
                 
@@ -153,7 +159,6 @@ public static class RouteManager
         Menu savedMenu = Menu.CreateChoiceMenu(savedData);
         savedMenu.HandleUsing();
         
-        //TODO: check 2 arrays
         PresentationDataType[] dataTypes = Storage.S_DataBlocks[savedMenu.SelectedMenuPoint].DataTypes.ToArray();
         if (dataTypes.Length == 0)
         {
@@ -210,13 +215,7 @@ public static class RouteManager
         void ShowDataViaFile()
         {
             string? filePath = Storage.S_CurSettings.FavouriteOutputFile;
-            if (!File.Exists(filePath))
-            {
-                filePath = InputHandler.GetValidPath($"Файла по любимому пути больше нет, пожалуйста, введите путь, куда требуется сохранить данные или \"{Storage.S_ExitString}\", чтобы выйти: ");
-                Storage.S_CurSettings.FavouriteOutputFile = string.Empty;
-                SettingsManager.SaveSettings(true);
-            }
-            else if (filePath == string.Empty)
+            if (filePath == string.Empty)
                 filePath = InputHandler.GetValidPath($"Введите путь, куда требуется сохранить данные или \"{Storage.S_ExitString}\", чтобы выйти: ");
             
             if (filePath == null)
@@ -309,5 +308,19 @@ public static class RouteManager
         {
             Console.WriteLine("Произошла ошибка при запуске отдельного приложения.");
         }
+    }
+
+    /// <summary>
+    /// Opens the help menu, providing information on menu navigation and actions.
+    /// </summary>
+    private static void OpenHelp()
+    {
+        Printer.FullClear();
+        string helpText = $"Меню: управление по меню осуществляется с помощью стрелок вверх-вниз или цифр на клавиатуре, для подтверждения действия нажмите \"Enter\".{Environment.NewLine}" +
+                          $"После того, как будут введены корректные данные, программа даст возможность работать с ними.{Environment.NewLine}" +
+                          $"В настройках можно выбрать любимые пути до файла, тогда Вам не будет предложено каждый раз выбирать файл, из которого нужно считать или в который нужно вывести данные, а будет взят файл по любимому пути.{Environment.NewLine}" +
+                          $"Чтобы сделать выборку по массиву, введите его значения через запятую без пробела.";
+        Console.WriteLine(helpText);
+        InputHandler.WaitForUserInput("Нажмите любую кнопку, чтобы вернуться в меню: ");
     }
 }

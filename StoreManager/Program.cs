@@ -1,4 +1,5 @@
-﻿using DatabaseLayer;
+﻿using System.Globalization;
+using DatabaseLayer;
 using DataLayer;
 using UILayer;
 
@@ -19,12 +20,12 @@ internal static class Program
         //StoreData store = JsonSerializer.Deserialize<StoreData>(jsonData);
         //Console.WriteLine(store);
 
-
+        double d = double.Parse("123,34", CultureInfo.InvariantCulture);
+        
         RouteManager.HandleEnteringProgram();
         while (true)
         {
-            RouteManager.CreateMainMenu().HandleUsing();
-            /*try
+            try
             {
                 RouteManager.CreateMainMenu().HandleUsing();
             }
@@ -32,7 +33,7 @@ internal static class Program
             {
                 Console.WriteLine(ex.Message);
                 InputHandler.WaitForUserInput("Нажмите любую кнопку, чтобы продолжить: ");
-            }*/
+            }
         }
     }
 }

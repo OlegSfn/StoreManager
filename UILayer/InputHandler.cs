@@ -60,7 +60,13 @@ public static class InputHandler
         Console.WriteLine();
     }
     
-
+    /// <summary>
+    /// Prompts the user to enter a valid file path to a JSON file, ensuring it has the correct extension.
+    /// </summary>
+    /// <param name="msg">The message to display as a prompt for the user to enter the file path.</param>
+    /// <returns>
+    /// A valid file path to a JSON file entered by the user, or null if the user provides no input.
+    /// </returns>
     public static string? GetFilePathToJson(string msg)
     {
         while (true)
@@ -84,10 +90,13 @@ public static class InputHandler
     }
     
     /// <summary>
-    /// Gets a valid file path from the user, handling existing files and potential overwrite confirmation.
+    /// Prompts the user to enter a valid file path to a JSON file, ensuring it has the correct extension
+    /// and handling cases where the specified file already exists.
     /// </summary>
-    /// <param name="msg">The message to display before getting the file path.</param>
-    /// <returns>The valid file path entered by the user.</returns>
+    /// <param name="msg">The message to display as a prompt for the user to enter the file path.</param>
+    /// <returns>
+    /// A valid file path to a JSON file entered by the user, or null if the user provides no input.
+    /// </returns>
     public static string? GetValidPath(string msg)
     {
         while (true)
