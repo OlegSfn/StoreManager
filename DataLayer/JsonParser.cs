@@ -71,7 +71,8 @@ public static class JsonParser
         string curKey = "", curVal = "";
         bool hasDotInside = false, isLastCharABackslash = false, isWaitingForNextVal = false;
         ValueType curValueType = ValueType.None;
-        HashSet<char> tfnAlph = new HashSet<char>{ 't', 'r', 'u', 'e', 'f', 'a', 'l', 's', 'n', 'u' };
+        HashSet<char> trueFalseNullChars = new HashSet<char>{ 't', 'r', 'u', 'e', 'f', 'a', 'l', 's', 'n', 'u' };
+        HashSet<char> escapeSeqChars = new HashSet<char>{ '\\', '"'};
         #endregion
 
         #region local functions
@@ -238,7 +239,7 @@ public static class JsonParser
                         default:
                         {
                             if (!char.IsWhiteSpace(c))
-                                ThrowExceptionWithComments($"Expected new object", c);
+                                ThrowExceptionWithComments("Expected new object", c);
                             break;
                         }
                     }
@@ -268,13 +269,24 @@ public static class JsonParser
                     }
                     break;
                 case ParseState.ReadingKey:
-                    if (c == '"')
+                    if (c == '"' && !isLastCharABackslash)
                     {
                         parseStates.Push(curState);
                         curState = ParseState.ExpectingValue;
                     }
                     else
-                        curKey += c;
+                    {
+                        if (isLastCharABackslash)
+                        {
+                            if (!escapeSeqChars.Contains(c))
+                                ThrowExceptionWithComments("Wrong escape sequence", c);
+                            else if (c == '\\')
+                                curKey += c;
+                        }
+                            
+                        if (c != '\\')
+                            curKey += c;
+                    }
                     break;
                 case ParseState.ExpectingValue:
                     if (char.IsDigit(c))
@@ -317,7 +329,7 @@ public static class JsonParser
                     }
                     break;
                 case ParseState.ReadingValue:
-                    if (curValueType == ValueType.String && c == '"')
+                    if (curValueType == ValueType.String && c == '"' && !isLastCharABackslash)
                     {
                         PushValue();
                         parseStates.Push(curState);
@@ -344,7 +356,7 @@ public static class JsonParser
                     }
                     else switch (curValueType)
                     {
-                        case ValueType.Bool when !tfnAlph.Contains(c):
+                        case ValueType.Bool when !trueFalseNullChars.Contains(c):
                         {
                             string lastVal = curVal.Split(DataType.SecretSep, StringSplitOptions.RemoveEmptyEntries)[^1];
                             if (lastVal.StartsWith('t') && lastVal != "true")
@@ -356,7 +368,7 @@ public static class JsonParser
                             HandleSpecialEnd(c);
                             break;
                         }
-                        case ValueType.Null when !tfnAlph.Contains(c):
+                        case ValueType.Null when !trueFalseNullChars.Contains(c):
                         {
                             string lastVal = curVal.Split(DataType.SecretSep, StringSplitOptions.RemoveEmptyEntries)[^1];
                             if (lastVal.StartsWith('n') && lastVal != "null")
@@ -367,7 +379,23 @@ public static class JsonParser
                             break;
                         }
                         default:
-                            curVal += c;
+                            if (curValueType == ValueType.String)
+                            {
+                                if (isLastCharABackslash)
+                                {
+                                    if (!escapeSeqChars.Contains(c))
+                                        ThrowExceptionWithComments("Wrong escape sequence", c);
+                                    else if (c == '\\')
+                                        curVal += c;
+                                }
+                            
+                                if (c != '\\')
+                                    curVal += c;
+                            }
+                            else
+                            {
+                                curVal += c;
+                            }
                             break;
                     }
 
@@ -440,7 +468,7 @@ public static class JsonParser
                     isWaitingForNextVal = true;
                     break;
                 case '\\':
-                    isLastCharABackslash = true;
+                    isLastCharABackslash = !isLastCharABackslash;
                     break;
             }
 
