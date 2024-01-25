@@ -12,7 +12,7 @@ public sealed class StoreData : PresentationDataType
     private string[]? _employees;
     private string[]? _products;
 
-    private const string _noValStr = "Нет значения"; // If a field is null, it will be replaced later with this string.
+    private const string NoValStr = "Нет значения"; // If a field is null, it will be replaced later with this string.
 
     /// <inheritdoc/>
     public override string this[string fieldName]
@@ -21,18 +21,18 @@ public sealed class StoreData : PresentationDataType
         {
             return fieldName switch
             {
-                "store_id" => _id.ToString() ?? _noValStr,
-                "store_name" => _name ?? _noValStr,
-                "location" => _location ?? _noValStr,
-                "employees" => _employees != null ? string.Join(',', _employees) : _noValStr,
-                "products" => _products != null ? string.Join(',', _products) : _noValStr,
+                "store_id" => _id.ToString() ?? NoValStr,
+                "store_name" => _name ?? NoValStr,
+                "location" => _location ?? NoValStr,
+                "employees" => _employees != null ? string.Join(',', _employees) : NoValStr,
+                "products" => _products != null ? string.Join(',', _products) : NoValStr,
                 _ => throw new ArgumentOutOfRangeException(nameof(fieldName), fieldName, null)
             };
         }
         
         set
         {
-            if (value == "null" || value == $"null{SecretSep}")
+            if (value is "null" or $"null{SecretSep}")
                 return;
             
             switch (fieldName)
@@ -98,7 +98,7 @@ public sealed class StoreData : PresentationDataType
 
     /// <inheritdoc/>
     public override string[] GetFieldValues()
-        => new[] { _id?.ToString() ?? _noValStr, _name ?? _noValStr, _location ?? _noValStr, 
-            _employees != null ? string.Join(", ", _employees) : _noValStr, 
-            _products != null ? string.Join(", ", _products) : _noValStr };
+        => new[] { _id?.ToString() ?? NoValStr, _name ?? NoValStr, _location ?? NoValStr, 
+            _employees != null ? string.Join(", ", _employees) : NoValStr, 
+            _products != null ? string.Join(", ", _products) : NoValStr };
 }

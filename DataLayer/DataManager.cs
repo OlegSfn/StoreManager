@@ -33,7 +33,7 @@ public static class DataManager
     /// <param name="fieldName">The name of the field to filter by.</param>
     /// <param name="value">The value to filter for in the specified field.</param>
     /// <returns>A new data block containing the filtered data.</returns>
-    public static DataBlock FilterData(PresentationDataType[] dataTypes, string fieldName, string value)
+    public static DataBlock FilterData(IEnumerable<PresentationDataType> dataTypes, string fieldName, string value)
     {
         List<PresentationDataType> filteredData = new List<PresentationDataType>();
         foreach (PresentationDataType dataType in dataTypes)

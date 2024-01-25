@@ -44,7 +44,7 @@ public static class RouteManager
         MenuPoint exit = new MenuPoint("Выйти.", () => Environment.Exit(0));
         
         menuPoints.Add(enterData);
-        if (Storage.S_DataBlocks != null && Storage.S_DataBlocks.Count > 0)
+        if (Storage.S_DataBlocks.Count > 0)
         {
             menuPoints.Add(filterData);
             menuPoints.Add(sortData);
@@ -99,7 +99,7 @@ public static class RouteManager
         {
             try
             {
-                string filePath = Storage.S_CurSettings.FavouriteInputFile;
+                string? filePath = Storage.S_CurSettings.FavouriteInputFile;
                 if (filePath == string.Empty)
                     filePath = InputHandler.GetFilePathToJson($"Введите путь до json файла, из которого надо считать данные или \"{Storage.S_ExitString}\", чтобы выйти: ");
                 else if (!File.Exists(filePath))
@@ -147,6 +147,8 @@ public static class RouteManager
             case ConsoleFileOption.AlwaysWithFile:
                 EnterDataViaFile();
                 break;
+            default:
+                throw new ArgumentOutOfRangeException();
         }
     }
     
@@ -170,7 +172,7 @@ public static class RouteManager
         Menu filterMenu = Menu.CreateChoiceMenu(fieldNames);
         filterMenu.HandleUsing();
 
-        string value = InputHandler.SafeReadline("Введите значение для выборки: ", "Введена недопустимая строка.");
+        string value = InputHandler.SafeReadline("Введите значение для выборки (Не забудьте, что элементы массива разделёны строго одной запятой без пробелов): ", "Введена недопустимая строка.");
         DataBlock dataBlock = DataManager.FilterData(dataTypes, fieldNames[filterMenu.SelectedMenuPoint], value);
         Storage.AddDataBlock(dataBlock);
     }

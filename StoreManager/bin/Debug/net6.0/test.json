@@ -4,12 +4,13 @@
 	"store_name": "R",
 	"location": "We",
 	"employees": [
- 		"Mar",
-		"D" 
+		"Mar",
+		"D"
 	],
 	"products": [
- 		"m",
-		"gen" 
+		null,
+		null,
+		"asd"
 	]
 },
 {
@@ -17,14 +18,11 @@
 	"store_name": "Vaughn-Ramirez",
 	"location": "Monicahaven",
 	"employees": [
- 		"Emily Miller",
-		"Michael Gross" 
+		"Emily Miller",
+		"Michael Gross"
 	],
 	"products": [
- 		"down",
-		"such",
-		"more",
-		"of" 
+		
 	]
 },
 {
@@ -32,16 +30,16 @@
 	"store_name": "English, Tran and Horne",
 	"location": "New Dustinview",
 	"employees": [
- 		"Christopher Brewer",
+		"Christopher Brewer",
 		"Thomas Rose",
-		"Jeffrey Martin" 
+		"Jeffrey Martin"
 	],
 	"products": [
- 		"especially",
+		"especially",
 		"government",
 		"official",
 		"wide",
-		"boy" 
+		"boy"
 	]
 }
 ]

@@ -69,7 +69,7 @@ public static class JsonParser
         List<T> dataTypes = new List<T>();
         T curStore = new T();
         string curKey = "", curVal = "";
-        bool hasDotInside = false;
+        bool hasDotInside = false, isLastCharABackslash = false, isWaitingForNextVal = false;
         ValueType curValueType = ValueType.None;
         HashSet<char> tfnAlph = new HashSet<char>{ 't', 'r', 'u', 'e', 'f', 'a', 'l', 's', 'n', 'u' };
         #endregion
@@ -80,12 +80,14 @@ public static class JsonParser
             throw new Exception($"{exceptionMessage}, got \"{character}\" in line {lineNumber} on character {characterNumber}");
         }
 
-        void ResetValues()
+        void ResetValues(char c = '\0')
         {
             curStore[curKey] = curVal;
+            if (c != ',')
+                isWaitingForNextVal = false;
+            hasDotInside = false;
             (curKey, curVal) = ("", "");
             curValueType = ValueType.None;
-            hasDotInside = false;
         }
 
         ParseState PopFor(int count)
@@ -96,7 +98,7 @@ public static class JsonParser
             return parseStates.Pop();
         }
 
-        void HandleEnd(char c)
+        void HandleSpecialEnd(char c)
         {
             switch (c)
             {
@@ -107,11 +109,17 @@ public static class JsonParser
                     curState = PopFor(3);
                     break;
                 case '}':
+                    if (isWaitingForNextVal)
+                        throw new Exception("There was a comma, but wasn't a value");
+                    
                     curState = PopFor(4);
                     dataTypes.Add(curStore);
                     curStore = new T();
                     break;
                 case ']':
+                    if (isWaitingForNextVal)
+                        throw new Exception("There was a comma, but wasn't a value");
+                    
                     if (parseStates.Count == 2 && parseStates.Peek() == ParseState.InArray)
                     {
                         parseStates.Pop();
@@ -121,9 +129,7 @@ public static class JsonParser
                         
                     ResetValues();
                     PopFor(3);
-                    if (curState != ParseState.ExpectingEnd)
-                        curState = ParseState.ExpectingEnd;
-                    
+                    curState = ParseState.ExpectingEnd;
                     break;
                 default:
                     parseStates.Push(curState);
@@ -132,10 +138,15 @@ public static class JsonParser
             }
         }
 
-        void PushValue()
+        void PushValue(char c = '\0')
         {
             if (parseStates.Peek() == ParseState.InArray)
+            {
                 curVal += DataType.SecretSep;
+                if (c != ',')
+                    isWaitingForNextVal = false;
+                hasDotInside = false;
+            }
             else
                 ResetValues();
         }
@@ -147,22 +158,28 @@ public static class JsonParser
             switch (curState)
             {
                 case ParseState.None:
-                    if (c == '[')
+                    switch (c)
                     {
-                        parseStates.Push(curState);
-                        curState = ParseState.InArray;
-                    }
-                    else if (c == '{')
-                    {
-                        parseStates.Push(curState);
-                        curState = ParseState.InObject;
-                    }
-                    else if (!char.IsWhiteSpace(c))
-                    {
-                        if (dataTypes.Count == 0)
-                            throw new Exception("Expected array of objects or object");
+                        case '[':
+                            parseStates.Push(curState);
+                            curState = ParseState.InArray;
+                            break;
+                        case '{':
+                            parseStates.Push(curState);
+                            curState = ParseState.InObject;
+                            break;
+                        default:
+                        {
+                            if (!char.IsWhiteSpace(c))
+                            {
+                                if (dataTypes.Count == 0)
+                                    throw new Exception("Expected array of objects or object");
                         
-                        ThrowExceptionWithComments($"Expected end of data", c);
+                                ThrowExceptionWithComments($"Expected end of data", c);
+                            }
+
+                            break;
+                        }
                     }
                     break;
                 case ParseState.InArray when parseStates.Peek() == ParseState.ExpectingValue:
@@ -192,6 +209,13 @@ public static class JsonParser
                             curValueType = ValueType.Null;
                             curState = ParseState.ReadingValue;
                             curVal += c;
+                            break;
+                        case ']':
+                            if (isWaitingForNextVal)
+                                throw new Exception("There was a comma, but wasn't a value");
+                            PushValue();
+                            curState = ParseState.ExpectingEnd;
+                            parseStates.Pop();
                             break;
                         default:
                         {
@@ -223,10 +247,14 @@ public static class JsonParser
                     switch (c)
                     {
                         case '"':
+                            isWaitingForNextVal = false;
                             parseStates.Push(curState);
                             curState = ParseState.ReadingKey;
                             break;
                         case '}':
+                            if (isWaitingForNextVal)
+                                throw new Exception("There was a comma, but wasn't a value");
+                            
                             curState = parseStates.Pop();
                             dataTypes.Add(curStore);
                             curStore = new T();
@@ -307,32 +335,40 @@ public static class JsonParser
                             hasDotInside = true;
                             break;
                         }
+                        
                         if (char.IsLetter(c))
                             ThrowExceptionWithComments("Expected value", c);
-                        PushValue();
-                        HandleEnd(c);
-                    }
-                    else if (curValueType == ValueType.Bool && !tfnAlph.Contains(c))
-                    {
-                        if (curVal.StartsWith('t') && curVal != "true")
-                            throw new Exception($"Expected true in line {lineNumber} on character {characterNumber}, got {curVal + c}");
-                        if (curVal.StartsWith('f') && curVal != "false")
-                            throw new Exception($"Expected false in line {lineNumber} on character {characterNumber}, got {curVal + c}");
                         
                         PushValue();
-                        HandleEnd(c);
+                        HandleSpecialEnd(c);
                     }
-                    else if (curValueType == ValueType.Null && !tfnAlph.Contains(c))
+                    else switch (curValueType)
                     {
-                        if (curVal.StartsWith('n') && curVal != "null")
-                            throw new Exception($"Expected null in line {lineNumber} on character {characterNumber}, got {curVal + c}");
+                        case ValueType.Bool when !tfnAlph.Contains(c):
+                        {
+                            string lastVal = curVal.Split(DataType.SecretSep, StringSplitOptions.RemoveEmptyEntries)[^1];
+                            if (lastVal.StartsWith('t') && lastVal != "true")
+                                throw new Exception($"Expected true in line {lineNumber} on character {characterNumber}, got {lastVal + c}");
+                            if (lastVal.StartsWith('f') && lastVal != "false")
+                                throw new Exception($"Expected false in line {lineNumber} on character {characterNumber}, got {lastVal + c}");
                         
-                        PushValue();
-                        HandleEnd(c);
-                    }
-                    else
-                    {
-                        curVal += c;
+                            PushValue(c);
+                            HandleSpecialEnd(c);
+                            break;
+                        }
+                        case ValueType.Null when !tfnAlph.Contains(c):
+                        {
+                            string lastVal = curVal.Split(DataType.SecretSep, StringSplitOptions.RemoveEmptyEntries)[^1];
+                            if (lastVal.StartsWith('n') && lastVal != "null")
+                                throw new Exception($"Expected null in line {lineNumber} on character {characterNumber}, got {lastVal + c}");
+                        
+                            PushValue();
+                            HandleSpecialEnd(c);
+                            break;
+                        }
+                        default:
+                            curVal += c;
+                            break;
                     }
 
                     break;
@@ -356,9 +392,13 @@ public static class JsonParser
                         }
                         
                         curState = PopFor(3);
+                        isWaitingForNextVal = true;
                     }
                     else if (c == ']')
                     {
+                        if (isWaitingForNextVal)
+                            throw new Exception("There was a comma, but wasn't a value");
+                        
                         if (parseStates.Peek() == ParseState.InArray)
                         {
                             parseStates.Pop();
@@ -371,31 +411,48 @@ public static class JsonParser
                     }
                     else if (c == '}')
                     {
+                        if (isWaitingForNextVal)
+                            throw new Exception("There was a comma, but wasn't a value");
+                        
                         if (parseStates.Peek() == ParseState.ReadingValue)
                             PopFor(4);
                         else if (parseStates.Peek() == ParseState.ReadingKey)
                             PopFor(2);
+                        else if (parseStates.Peek() == ParseState.InObject)
+                            parseStates.Pop();
                         
                         dataTypes.Add(curStore);
                         curStore = new T();
                     }
                     else if (!char.IsWhiteSpace(c))
-                        ThrowExceptionWithComments($"Expected comma", c);
+                        ThrowExceptionWithComments("Expected comma", c);
                     break;
-                default:
-                    throw new ArgumentOutOfRangeException();
             }
 
-            // Not Environment.NewLine because we are reading only 1 char per iteration. (win - \r\n, mac - \n, both have \n).
-            if (c == '\n')
+            switch (c)
             {
-                lineNumber++;
-                characterNumber = 0;
+                // Not Environment.NewLine because we are reading only 1 char per iteration. (win - \r\n, mac - \n, both have \n).
+                case '\n':
+                    lineNumber++;
+                    characterNumber = 0;
+                    break;
+                case ',':
+                    isWaitingForNextVal = true;
+                    break;
+                case '\\':
+                    isLastCharABackslash = true;
+                    break;
             }
 
+            if (c != '\\')
+                isLastCharABackslash = false;
+            
             characterNumber++;
         }
-
+        
+        if (isWaitingForNextVal)
+            throw new Exception("There was a comma, but wasn't a value");
+        
         return dataTypes;
     }
     
@@ -431,7 +488,7 @@ public static class JsonParser
     /// <returns>The formatted input string.</returns>
     private static string FormInput()
     {
-        string line;
+        string? line;
         StringBuilder sb = new StringBuilder();
         while ((line = Console.ReadLine()) !=  null)
         {

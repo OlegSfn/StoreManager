@@ -9,8 +9,7 @@ namespace DataLayer;
 /// </summary>
 public static class SettingsManager
 {
-    private static string s_settingsFileName = "settings.json";
-    private static Menu s_settingsMenu;
+    private static readonly string s_settingsFileName = "settings.json";
     
     /// <summary>
     /// Saves the current application settings to a JSON file.

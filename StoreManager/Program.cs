@@ -20,7 +20,6 @@ internal static class Program
         //StoreData store = JsonSerializer.Deserialize<StoreData>(jsonData);
         //Console.WriteLine(store);
 
-        double d = double.Parse("123,34", CultureInfo.InvariantCulture);
         
         RouteManager.HandleEnteringProgram();
         while (true)
