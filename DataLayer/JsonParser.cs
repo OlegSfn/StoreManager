@@ -42,7 +42,7 @@ public static class JsonParser
     public static void WriteJson(DataBlock dataBlock)
     {
         foreach (string line in dataBlock.FormJson().Split(Environment.NewLine))
-            Console.WriteLine(line);
+            Console.WriteLine(line.Replace("\\", "\\\\"));
     }
     
     /// <summary>

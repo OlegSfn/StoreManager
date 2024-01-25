@@ -16,11 +16,6 @@ internal static class Program
         // /Users/oleg_sfn/Downloads/emptyObj.json
         // /Users/oleg_sfn/Downloads/small.json
         
-        //string jsonData = File.ReadAllText("/Users/oleg_sfn/Downloads/emptyObj.json");
-        //StoreData store = JsonSerializer.Deserialize<StoreData>(jsonData);
-        //Console.WriteLine(store);
-
-        
         RouteManager.HandleEnteringProgram();
         while (true)
         {
