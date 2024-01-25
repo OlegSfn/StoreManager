@@ -14,6 +14,18 @@ public sealed class StoreData : PresentationDataType
 
     private const string NoValStr = "Нет значения"; // If a field is null, it will be replaced later with this string.
 
+    public StoreData(int? id, string? name, string? location, string[]? employees, string[]? products)
+    {
+        _id = id;
+        _name = name;
+        _location = location;
+        _employees = employees;
+        _products = products;
+    }
+
+    public StoreData() : this(null, null, null, null, null) { }
+
+
     /// <inheritdoc/>
     public override string this[string fieldName]
     {
@@ -21,7 +33,7 @@ public sealed class StoreData : PresentationDataType
         {
             return fieldName switch
             {
-                "store_id" => _id.ToString() ?? NoValStr,
+                "store_id" => _id?.ToString() ?? NoValStr,
                 "store_name" => _name ?? NoValStr,
                 "location" => _location ?? NoValStr,
                 "employees" => _employees != null ? string.Join(',', _employees) : NoValStr,

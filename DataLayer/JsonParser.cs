@@ -51,7 +51,7 @@ public static class JsonParser
     /// <param name="dataType">The DataType to write as a string.</param>
     public static void WriteJson(DataType dataType)
     { 
-        Console.WriteLine(dataType);
+        Console.WriteLine(dataType.ToString()!.Replace("\\", "\\\\"));
     }
 
     /// <summary>
