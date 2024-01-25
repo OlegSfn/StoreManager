@@ -83,8 +83,8 @@ public sealed class SettingsData : DataType
         return $"{{{Environment.NewLine}" +
                $"\t\"IsFirstUsing\": {IsFirstUsing.ToString().ToLower()},{Environment.NewLine}" +
                $"\t\"NeedOpenFileAfterWriting\": {NeedOpenFileAfterWriting.ToString().ToLower()},{Environment.NewLine}" +
-               $"\t\"FavouriteInputFile\": \"{FavouriteInputFile}\",{Environment.NewLine}" +
-               $"\t\"FavouriteOutputFile\": \"{FavouriteOutputFile}\",{Environment.NewLine}" +
+               $"\t\"FavouriteInputFile\": \"{FavouriteInputFile.Replace("\\", "\\\\")}\",{Environment.NewLine}" +
+               $"\t\"FavouriteOutputFile\": \"{FavouriteOutputFile.Replace("\\", "\\\\")}\",{Environment.NewLine}" +
                $"\t\"EnterDataChoice\": {(int)EnterDataChoice},{Environment.NewLine}" +
                $"\t\"ShowResultChoice\": {(int)ShowResultChoice},{Environment.NewLine}" +
                $"\t\"ViewingMode\": {(int)ViewingMode}{Environment.NewLine}" +

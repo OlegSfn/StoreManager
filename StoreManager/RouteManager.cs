@@ -19,13 +19,13 @@ public static class RouteManager
     {
         Storage.S_StandardInput = Console.In;
         Storage.S_StandardOutput = Console.Out;
-        SettingsManager.LoadSettings();
-        if (Storage.S_CurSettings.IsFirstUsing)
-            HandleFirstUsing();
-        
         Storage.S_ExitString =  "Ctrl+Z";
         if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux) || RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
             Storage.S_ExitString = "Ctrl+D";
+        
+        SettingsManager.LoadSettings();
+        if (Storage.S_CurSettings.IsFirstUsing)
+            HandleFirstUsing();
     }
     
     /// <summary>
